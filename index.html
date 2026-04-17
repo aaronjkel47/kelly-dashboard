@@ -3,944 +3,1518 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kelly Household</title>
+<title>Kelly Household · Finance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #f7f4ef;
-  --bg2:     #edeae3;
-  --bg3:     #e2ddd6;
-  --ink:     #111;
-  --ink2:    #444;
-  --ink3:    #888;
-  --green:   #1a4731;
-  --green2:  #2d7a52;
-  --greenl:  #e8f3ed;
-  --red:     #7a1f1f;
-  --redl:    #f7eded;
-  --amber:   #6b4800;
-  --amberl:  #fdf4e0;
-  --blue:    #1a2f5c;
-  --bluel:   #e6edf8;
-  --purple:  #3d2a6b;
-  --purpl:   #eeebf7;
-  --serif:   'DM Serif Display', serif;
-  --sans:    'DM Sans', system-ui, sans-serif;
-  --mono:    'DM Mono', monospace;
-  --r:       8px;
-  --sh:      0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
+  --navy: #0a0e1a;
+  --navy2: #0f1525;
+  --navy3: #161d30;
+  --navy4: #1e2740;
+  --border: #253050;
+  --border2: #2e3a5a;
+  --text: #e8edf8;
+  --text2: #8a97b8;
+  --text3: #4a5878;
+  --accent: #4f8ef7;
+  --accent2: #2563eb;
+  --green: #22c55e;
+  --green2: #16a34a;
+  --red: #f87171;
+  --red2: #dc2626;
+  --amber: #fbbf24;
+  --amber2: #d97706;
+  --teal: #2dd4bf;
+  --purple: #a78bfa;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--sans); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+html { background: var(--navy); color: var(--text); font-family: var(--sans); font-size: 14px; }
+body { min-height: 100vh; display: flex; flex-direction: column; }
 
-/* TOPBAR */
-.topbar {
-  background: var(--ink); color: #f7f4ef;
+/* HEADER */
+.header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 2rem; height: 56px; position: sticky; top: 0; z-index: 200;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 0 24px; height: 52px;
+  background: var(--navy2); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
 }
-.topbar-brand { font-family: var(--serif); font-size: 1.15rem; }
-.topbar-sub { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: .1em; text-transform: uppercase; margin-top: 1px; }
-.topbar-right { display: flex; align-items: center; gap: 1rem; }
-.topbar-status { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.4); }
-.topbar-status span { color: #6eb88a; }
-nav { display: flex; }
-.nb {
-  background: none; border: none; border-bottom: 2px solid transparent;
-  color: rgba(255,255,255,0.4); font-family: var(--mono); font-size: 10px;
-  letter-spacing: .07em; text-transform: uppercase; padding: 0 1rem; height: 56px;
-  cursor: pointer; transition: color .15s, border-color .15s; white-space: nowrap;
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.brand-name { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; color: var(--text); }
+.brand-sub { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-left: 4px; }
+.header-status { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.header-status span { color: var(--green); }
+
+/* NAV TABS */
+.nav { display: flex; gap: 0; padding: 0 24px; background: var(--navy2); border-bottom: 1px solid var(--border); overflow-x: auto; }
+.nav::-webkit-scrollbar { height: 2px; }
+.nav::-webkit-scrollbar-track { background: transparent; }
+.nav::-webkit-scrollbar-thumb { background: var(--border2); }
+.nav-tab {
+  padding: 10px 16px; font-family: var(--mono); font-size: 11px; font-weight: 400;
+  color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.05em; text-transform: uppercase;
 }
-.nb:hover { color: rgba(255,255,255,0.8); }
-.nb.active { color: #f7f4ef; border-bottom-color: #6eb88a; }
-.rfr-btn {
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.6); font-family: var(--mono); font-size: 10px;
-  padding: 6px 13px; border-radius: var(--r); cursor: pointer; transition: all .15s;
+.nav-tab:hover { color: var(--text2); }
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* MAIN LAYOUT */
+.main { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* SECTION HEADERS */
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 16px;
 }
-.rfr-btn:hover { background: rgba(255,255,255,0.14); color: #f7f4ef; }
+.section-title { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+.section-note { font-family: var(--mono); font-size: 10px; color: var(--text3); }
 
-/* LAYOUT */
-.page { display: none; padding: 1.75rem; max-width: 1140px; margin: 0 auto; }
-.page.active { display: block; animation: fi .25s ease; }
-@keyframes fi { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+/* GRID LAYOUTS */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+.grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 20px; }
+@media(max-width:900px){.grid-4,.grid-3{grid-template-columns:repeat(2,1fr);}.grid-2-1,.grid-1-2{grid-template-columns:1fr;}}
+@media(max-width:600px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr;}}
 
-/* SECTION LABEL */
-.sl { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin: 1.75rem 0 .65rem; }
-.sl:first-child { margin-top: 0; }
+/* CARDS */
+.card {
+  background: var(--navy2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px 18px;
+}
+.card-sm { padding: 12px 16px; }
 
-/* METRIC STRIP */
-.mstrip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 1px; background: var(--bg3); border: 1px solid var(--bg3); border-radius: var(--r); overflow: hidden; margin-bottom: 1.25rem; }
-.mc { background: var(--bg); padding: 1rem 1.1rem; transition: background .12s; }
-.mc:hover { background: var(--bg2); }
-.mc-l { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); margin-bottom: .25rem; }
-.mc-v { font-family: var(--serif); font-size: 1.75rem; letter-spacing: -.02em; line-height: 1.1; }
-.mc-v.g { color: var(--green); }
-.mc-v.r { color: var(--red); }
-.mc-v.a { color: var(--amber); }
-.mc-v.b { color: var(--blue); }
-.mc-s { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+/* KPI CARDS */
+.kpi { display: flex; flex-direction: column; gap: 4px; }
+.kpi-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+.kpi-value { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; }
+.kpi-value.green { color: var(--green); }
+.kpi-value.red { color: var(--red); }
+.kpi-value.amber { color: var(--amber); }
+.kpi-value.accent { color: var(--accent); }
+.kpi-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.kpi-delta { font-family: var(--mono); font-size: 11px; }
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
 
-/* CARD */
-.card { background: var(--bg); border: 1px solid var(--bg3); border-radius: var(--r); padding: 1.2rem; margin-bottom: 1rem; box-shadow: var(--sh); }
-.card-title { font-family: var(--serif); font-size: 1rem; margin-bottom: .7rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
-.ct-sub { font-family: var(--mono); font-size: 10px; color: var(--ink3); }
+/* TABLES */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+thead th {
+  text-align: left; padding: 8px 10px; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text3); border-bottom: 1px solid var(--border);
+  font-weight: 400; white-space: nowrap;
+}
+thead th.r { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+tbody tr:hover { background: var(--navy3); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 8px 10px; color: var(--text2); white-space: nowrap; }
+td.r { text-align: right; }
+td.primary { color: var(--text); }
+td.green { color: var(--green); }
+td.red { color: var(--red); }
+td.amber { color: var(--amber); }
+td.accent { color: var(--accent); }
+td.mono { font-family: var(--mono); }
 
-/* ROWS */
-.row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--bg2); gap: 1rem; font-size: 13px; }
-.row:last-child { border-bottom: none; }
-.rl { color: var(--ink2); flex: 1; min-width: 0; }
-.rl small { font-size: 11px; color: var(--ink3); display: block; }
-.ra { font-family: var(--mono); font-size: 12px; font-weight: 500; white-space: nowrap; }
-.ra.g { color: var(--green); }
-.ra.r { color: var(--red); }
-.ra.a { color: var(--amber); }
-.ra.b { color: var(--blue); }
+/* PILLS / BADGES */
+.pill {
+  display: inline-block; padding: 2px 8px; border-radius: 3px;
+  font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.05em;
+}
+.pill-green { background: rgba(34,197,94,0.12); color: var(--green); }
+.pill-red { background: rgba(248,113,113,0.12); color: var(--red); }
+.pill-amber { background: rgba(251,191,36,0.12); color: var(--amber); }
+.pill-blue { background: rgba(79,142,247,0.12); color: var(--accent); }
+.pill-purple { background: rgba(167,139,250,0.12); color: var(--purple); }
+.pill-teal { background: rgba(45,212,191,0.12); color: var(--teal); }
+.pill-gray { background: rgba(138,151,184,0.12); color: var(--text2); }
 
-/* TAGS */
-.tag { display: inline-block; font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 99px; white-space: nowrap; vertical-align: middle; }
-.tag-g { background: var(--greenl); color: var(--green); }
-.tag-r { background: var(--redl); color: var(--red); }
-.tag-a { background: var(--amberl); color: var(--amber); }
-.tag-b { background: var(--bluel); color: var(--blue); }
-.tag-p { background: var(--purpl); color: var(--purple); }
-.tag-n { background: var(--bg2); color: var(--ink3); }
+/* PROGRESS BARS */
+.progress-wrap { margin-bottom: 12px; }
+.progress-label { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.progress-label span { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.progress-label span.r { color: var(--text3); font-size: 10px; }
+.progress-bar { height: 4px; background: var(--navy4); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.fill-green { background: var(--green); }
+.fill-amber { background: var(--amber); }
+.fill-red { background: var(--red); }
+.fill-blue { background: var(--accent); }
+.fill-purple { background: var(--purple); }
 
-/* PROGRESS BAR */
-.prow { display: flex; align-items: center; gap: .75rem; padding: 7px 0; border-bottom: 1px solid var(--bg2); font-size: 13px; }
-.prow:last-child { border-bottom: none; }
-.pl { flex: 1; color: var(--ink2); }
-.pt { flex: 2; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; min-width: 60px; }
-.pf { height: 5px; border-radius: 3px; transition: width .5s; }
-.pa { font-family: var(--mono); font-size: 11px; min-width: 72px; text-align: right; white-space: nowrap; }
+/* ACCOUNT ROWS */
+.account-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.account-row:last-child { border-bottom: none; }
+.acct-left { display: flex; align-items: center; gap: 10px; }
+.acct-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.acct-name { font-family: var(--mono); font-size: 12px; color: var(--text); }
+.acct-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.acct-right { text-align: right; }
+.acct-bal { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.acct-date { font-family: var(--mono); font-size: 10px; color: var(--text3); }
 
-/* TRANSACTION TABLE */
-.txn-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.txn-table th { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--bg3); white-space: nowrap; }
-.txn-table th.r { text-align: right; }
-.txn-table td { padding: 7px 8px; border-bottom: 1px solid var(--bg2); vertical-align: middle; }
-.txn-table td.mono { font-family: var(--mono); font-size: 12px; }
-.txn-table td.r { text-align: right; }
-.txn-table tr:last-child td { border-bottom: none; }
-.txn-table tr.flagged { background: #fff8e6; }
-.txn-table tr.income { background: #f0f7ed; }
-.txn-table tr.resolved { opacity: .5; }
+/* SEARCH / FILTER */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-input {
+  background: var(--navy3); border: 1px solid var(--border); border-radius: 4px;
+  padding: 7px 12px; color: var(--text); font-family: var(--mono); font-size: 12px;
+  outline: none; transition: border-color 0.15s;
+}
+.filter-input:focus { border-color: var(--accent); }
+.filter-input::placeholder { color: var(--text3); }
+.filter-select {
+  background: var(--navy3); border: 1px solid var(--border); border-radius: 4px;
+  padding: 7px 12px; color: var(--text); font-family: var(--mono); font-size: 12px;
+  outline: none; cursor: pointer;
+}
+.filter-btn {
+  background: transparent; border: 1px solid var(--border); border-radius: 4px;
+  padding: 7px 14px; color: var(--text2); font-family: var(--mono); font-size: 11px;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: rgba(79,142,247,0.12); border-color: var(--accent); color: var(--accent); }
 
-/* FILTER BAR */
-.fbar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
-.fbtn { background: var(--bg2); border: 1px solid var(--bg3); border-radius: 99px; font-family: var(--mono); font-size: 10px; padding: 5px 12px; cursor: pointer; transition: all .12s; color: var(--ink2); white-space: nowrap; }
-.fbtn:hover { background: var(--bg3); }
-.fbtn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.fsearch { flex: 1; min-width: 160px; padding: 6px 10px; border: 1px solid var(--bg3); border-radius: var(--r); font-family: var(--sans); font-size: 13px; background: var(--bg); color: var(--ink); outline: none; }
-.fsearch:focus { border-color: var(--green2); }
+/* LOADING STATE */
+.loading { display: flex; align-items: center; gap: 8px; padding: 40px; justify-content: center; }
+.loading-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,80%,100%{opacity:0.2;transform:scale(0.8);} 40%{opacity:1;transform:scale(1);} }
 
-/* 2-COL */
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-@media (max-width: 700px) { .g2, .g3 { grid-template-columns: 1fr; } nav { display: none; } }
+/* EMPTY STATE */
+.empty { text-align: center; padding: 48px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
+.empty-icon { font-size: 24px; margin-bottom: 8px; }
 
-/* CHART */
-.cw { position: relative; }
+/* CHART CONTAINER */
+.chart-box { position: relative; width: 100%; }
 
-/* LEGEND */
-.leg { display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px; color: var(--ink3); margin-top: .5rem; }
-.leg-i { display: flex; align-items: center; gap: 4px; }
-.leg-d { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+/* NET WORTH BAR */
+.nw-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin: 8px 0; gap: 1px; }
+.nw-segment { height: 100%; transition: width 0.8s ease; }
 
-/* LOADING */
-.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; gap: 1rem; color: var(--ink3); }
-.spin { width: 24px; height: 24px; border: 2px solid var(--bg3); border-top-color: var(--green2); border-radius: 50%; animation: spin .7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.errbx { background: var(--redl); border: 1px solid #d4a0a0; border-radius: var(--r); padding: 1.2rem; color: var(--red); font-size: 13px; line-height: 1.6; }
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
-/* POINTS */
-.pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1px; background: var(--bg3); border: 1px solid var(--bg3); border-radius: var(--r); overflow: hidden; margin-bottom: 1.25rem; }
-.pcell { background: var(--bg); padding: 1rem 1.1rem; }
-.pn { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); margin-bottom: .25rem; }
-.pv { font-family: var(--serif); font-size: 1.5rem; letter-spacing: -.01em; }
-.ps { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+/* POINTS CARD */
+.points-card { display: flex; flex-direction: column; gap: 12px; }
+.points-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.points-row:last-child { border-bottom: none; }
+.points-program { font-family: var(--mono); font-size: 12px; color: var(--text); }
+.points-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.points-right { text-align: right; }
+.points-bal { font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--accent); }
+.points-val { font-family: var(--mono); font-size: 10px; color: var(--text3); }
 
-/* INVEST */
-.inv-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 6px; }
-.inv-fill { height: 6px; border-radius: 3px; }
+/* TRAVEL CARD */
+.trip-card { border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 10px; position: relative; }
+.trip-card.upcoming { border-left: 3px solid var(--accent); }
+.trip-card.past { border-left: 3px solid var(--text3); opacity: 0.7; }
+.trip-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.trip-name { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--text); }
+.trip-date { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.trip-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.trip-cost { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.trip-cost.free { color: var(--green); }
 
-/* BADGE */
-.badge { display: inline-flex; align-items: center; justify-content: center; background: var(--red); color: white; font-family: var(--mono); font-size: 9px; font-weight: 600; border-radius: 99px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
+/* REVIEW FLAGS */
+.flag-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.flag-row:last-child { border-bottom: none; }
+.flag-icon { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.flag-icon.warn { background: rgba(251,191,36,0.15); }
+.flag-icon.info { background: rgba(79,142,247,0.15); }
+.flag-icon.ok { background: rgba(34,197,94,0.15); }
+.flag-body { flex: 1; }
+.flag-title { font-family: var(--mono); font-size: 12px; color: var(--text); margin-bottom: 2px; }
+.flag-desc { font-family: var(--mono); font-size: 11px; color: var(--text3); line-height: 1.5; }
+
+/* SCROLLABLE TABLE CONTAINER */
+.table-scroll { max-height: 500px; overflow-y: auto; }
+.table-scroll::-webkit-scrollbar { width: 4px; }
+.table-scroll::-webkit-scrollbar-track { background: var(--navy); }
+.table-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* PAGINATION */
+.pagination { display: flex; align-items: center; gap: 8px; padding: 12px 0 0; }
+.page-btn {
+  background: transparent; border: 1px solid var(--border); border-radius: 3px;
+  padding: 4px 10px; color: var(--text2); font-family: var(--mono); font-size: 11px;
+  cursor: pointer; transition: all 0.15s;
+}
+.page-btn:hover { border-color: var(--accent); color: var(--accent); }
+.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-info { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+/* CATEGORY COLOR MAP */
+.cat-Housing { color: #60a5fa; }
+.cat-Food { color: #34d399; }
+.cat-Transport { color: #fbbf24; }
+.cat-Health { color: #f87171; }
+.cat-Entertainment { color: #a78bfa; }
+.cat-Shopping { color: #fb923c; }
+.cat-Utilities { color: #38bdf8; }
+.cat-Insurance { color: #e879f9; }
+.cat-Subscriptions { color: #4ade80; }
+.cat-Transfer { color: #94a3b8; }
+.cat-Income { color: #22c55e; }
+.cat-Investment { color: #2dd4bf; }
+.cat-Savings { color: #818cf8; }
+.cat-Debt { color: #f87171; }
+.cat-Travel { color: #fb923c; }
+.cat-Golf { color: #4ade80; }
+.cat-Other { color: #94a3b8; }
+
+/* TOOLTIP */
+.tooltip { position: relative; }
+.tooltip-text {
+  display: none; position: absolute; bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%); background: var(--navy4); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 6px 10px; font-family: var(--mono); font-size: 11px;
+  color: var(--text); white-space: nowrap; z-index: 999; pointer-events: none;
+}
+.tooltip:hover .tooltip-text { display: block; }
+
+/* BUDGET VS ACTUAL */
+.bva-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.bva-row:last-child { border-bottom: none; }
+.bva-cat { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 120px; flex-shrink: 0; }
+.bva-bar-wrap { flex: 1; }
+.bva-bar { height: 4px; background: var(--navy4); border-radius: 2px; overflow: hidden; }
+.bva-fill { height: 100%; border-radius: 2px; }
+.bva-nums { font-family: var(--mono); font-size: 11px; color: var(--text3); width: 100px; text-align: right; flex-shrink: 0; }
+
+/* INCOME / EXPENSE SUMMARY */
+.cashflow-col { display: flex; flex-direction: column; gap: 4px; }
+.cf-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.cf-row:last-child { border-bottom: none; }
+.cf-label { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.cf-val { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+
+/* INVESTMENTS */
+.inv-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.inv-row:last-child { border-bottom: none; }
+.inv-left { display: flex; flex-direction: column; gap: 2px; }
+.inv-name { font-family: var(--mono); font-size: 12px; color: var(--text); }
+.inv-detail { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.inv-right { text-align: right; }
+.inv-bal { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); }
+.inv-change { font-family: var(--mono); font-size: 10px; }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div>
-    <div class="topbar-brand">Kelly Household</div>
-    <div class="topbar-sub">2026 Financial Dashboard</div>
+<div class="header">
+  <div class="header-brand">
+    <div class="brand-dot"></div>
+    <span class="brand-name">KELLY</span>
+    <span class="brand-sub">/ household finance</span>
   </div>
-  <nav>
-    <button class="nb active" onclick="nav('overview')">Overview</button>
-    <button class="nb" onclick="nav('transactions')">Transactions</button>
-    <button class="nb" onclick="nav('review')">Review <span class="badge" id="review-badge" style="display:none">0</span></button>
-    <button class="nb" onclick="nav('spending')">Spending</button>
-    <button class="nb" onclick="nav('cashflow')">Cash Flow</button>
-    <button class="nb" onclick="nav('invest')">Investments</button>
-    <button class="nb" onclick="nav('points')">Points</button>
-    <button class="nb" onclick="nav('travel')">Travel</button>
-  </nav>
-  <div class="topbar-right">
-    <div class="topbar-status">Last sync: <span id="sync-time">--</span></div>
-    <button class="rfr-btn" onclick="loadAll()">Refresh</button>
+  <div class="header-status">last sync: <span id="last-sync">—</span></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-tab active" data-tab="overview">Overview</div>
+  <div class="nav-tab" data-tab="transactions">Transactions</div>
+  <div class="nav-tab" data-tab="review">Review</div>
+  <div class="nav-tab" data-tab="spending">Spending</div>
+  <div class="nav-tab" data-tab="cashflow">Cash Flow</div>
+  <div class="nav-tab" data-tab="investments">Investments</div>
+  <div class="nav-tab" data-tab="points">Points</div>
+  <div class="nav-tab" data-tab="travel">Travel</div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- TAB: OVERVIEW -->
+<!-- ============================================================ -->
+<div class="main">
+<div class="tab-content active" id="tab-overview">
+
+  <div class="grid-4">
+    <div class="card kpi">
+      <div class="kpi-label">Liquid Cash</div>
+      <div class="kpi-value green" id="kpi-liquid">—</div>
+      <div class="kpi-sub">checking + savings</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Total Investments</div>
+      <div class="kpi-value accent" id="kpi-investments">—</div>
+      <div class="kpi-sub">all accounts</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Total Debt</div>
+      <div class="kpi-value red" id="kpi-debt">—</div>
+      <div class="kpi-sub">loans · excl. IUL lever</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Net Worth</div>
+      <div class="kpi-value" id="kpi-networth">—</div>
+      <div class="kpi-sub">excl. home ($485k)</div>
+    </div>
+  </div>
+
+  <div class="grid-2-1">
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- ACCOUNTS -->
+      <div class="card">
+        <div class="section-head" style="margin-bottom:12px;">
+          <div class="section-title">Bank Accounts</div>
+          <div class="section-note" id="accounts-asof">—</div>
+        </div>
+
+        <div style="margin-bottom:8px;"><span class="section-note" style="color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;">Checking</span></div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#60a5fa;"></div><div><div class="acct-name">Aaron · Chase 6576</div><div class="acct-sub">Primary · payroll hub</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--text);" id="bal-6576">—</div><div class="acct-date" id="date-6576">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#60a5fa;"></div><div><div class="acct-name">Aaron · Chase 9057</div><div class="acct-sub">IUL pass-through</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--text);" id="bal-9057">—</div><div class="acct-date" id="date-9057">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#a78bfa;"></div><div><div class="acct-name">Joint · Chase 0593</div><div class="acct-sub">Bills account</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--text);" id="bal-0593">—</div><div class="acct-date" id="date-0593">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#f472b6;"></div><div><div class="acct-name">Amanda · Chase 3754</div><div class="acct-sub">Payroll · brokerage xfers</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--text);" id="bal-3754">—</div><div class="acct-date" id="date-3754">—</div></div>
+        </div>
+
+        <div style="margin:12px 0 8px;"><span class="section-note" style="color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;">Savings / HYSA</span></div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#34d399;"></div><div><div class="acct-name">Joint · Marcus HYSA 6216</div><div class="acct-sub">Emergency + reserves</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--green);" id="bal-6216">—</div><div class="acct-date" id="date-6216">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#34d399;"></div><div><div class="acct-name">Amanda · Marcus 9777</div><div class="acct-sub">Personal savings</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--green);" id="bal-9777">—</div><div class="acct-date" id="date-9777">—</div></div>
+        </div>
+      </div>
+
+      <!-- DEBTS -->
+      <div class="card">
+        <div class="section-head" style="margin-bottom:12px;">
+          <div class="section-title">Debts</div>
+          <div class="section-note" id="debts-asof">—</div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#f87171;"></div><div><div class="acct-name">Mohela · Private Student Loan</div><div class="acct-sub">KeyBank · 4.75% · $881/mo</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--red);" id="bal-mohela">—</div><div class="acct-date" id="date-mohela">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#fbbf24;"></div><div><div class="acct-name">Aidvantage · Federal Loans</div><div class="acct-sub">8 loans · 3.76–4.66% · SAVE forbearance</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--amber);" id="bal-aidvantage">—</div><div class="acct-date" id="date-aidvantage">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#f87171;"></div><div><div class="acct-name">Wells Fargo · 4Runner Auto</div><div class="acct-sub">6.59% · $524/mo · payoff Sep 2030</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--red);" id="bal-auto">—</div><div class="acct-date" id="date-auto">—</div></div>
+        </div>
+        <div class="account-row">
+          <div class="acct-left"><div class="acct-dot" style="background:#2dd4bf;"></div><div><div class="acct-name">IUL Policy Loan (MPI strategy)</div><div class="acct-sub">Leverage · internal to policy</div></div></div>
+          <div class="acct-right"><div class="acct-bal" style="color:var(--teal);" id="bal-iulloan">—</div><div class="acct-date">intentional</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- NET WORTH BREAKDOWN -->
+      <div class="card">
+        <div class="section-title" style="margin-bottom:14px;">Net Worth Breakdown</div>
+        <div class="nw-bar" id="nw-bar"></div>
+        <div style="margin-top:12px;" id="nw-legend"></div>
+      </div>
+
+      <!-- FIL OBLIGATION -->
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">FIL Brokerage Obligation</div>
+        <div class="kpi-value accent" style="font-size:18px;" id="fil-progress">—</div>
+        <div class="kpi-sub" style="margin:4px 0 10px;">of $485,000 target · $2,500/mo</div>
+        <div class="progress-bar"><div class="progress-fill fill-blue" id="fil-bar" style="width:0%"></div></div>
+        <div style="margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--text3);" id="fil-eta">—</div>
+      </div>
+
+      <!-- MONTHLY SNAPSHOT -->
+      <div class="card">
+        <div class="section-title" style="margin-bottom:12px;">This Month</div>
+        <div class="cf-row"><span class="cf-label">Aaron income (est.)</span><span class="cf-val green">+$3,800</span></div>
+        <div class="cf-row"><span class="cf-label">Amanda income (est.)</span><span class="cf-val green">+$5,000</span></div>
+        <div class="cf-row"><span class="cf-label">Total income</span><span class="cf-val green" style="font-size:14px;">+$8,800</span></div>
+        <div style="margin:8px 0 4px;border-top:1px solid var(--border);padding-top:8px;">
+          <div class="cf-row"><span class="cf-label">Fixed obligations</span><span class="cf-val red" id="cf-fixed">—</span></div>
+          <div class="cf-row"><span class="cf-label">Variable (actual)</span><span class="cf-val amber" id="cf-variable">—</span></div>
+          <div class="cf-row"><span class="cf-label">Investments</span><span class="cf-val accent">–$3,000</span></div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;">
+          <div class="cf-row"><span class="cf-label" style="color:var(--text);">Est. surplus</span><span class="cf-val" id="cf-surplus" style="font-size:14px;">—</span></div>
+        </div>
+      </div>
+
+      <!-- PROPERTY TAX ALERT -->
+      <div class="card" style="border-color:rgba(251,191,36,0.4);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="color:var(--amber);font-size:14px;">⚠</span>
+          <span class="section-title" style="color:var(--amber);">Property Tax Due</span>
+        </div>
+        <div class="cf-row"><span class="cf-label">Installment 1</span><span class="cf-val amber">~$6,300 · Jun 3</span></div>
+        <div class="cf-row"><span class="cf-label">Installment 2</span><span class="cf-val amber">~$5,700 · Sep 3</span></div>
+        <div class="cf-row"><span class="cf-label">FIL reimbursement</span><span class="cf-val green">$25,000 expected</span></div>
+        <div class="cf-row"><span class="cf-label">Current HYSA</span><span class="cf-val accent" id="ptax-hysa">—</span></div>
+      </div>
+
+    </div>
   </div>
 </div>
 
-<!-- OVERVIEW -->
-<div class="page active" id="page-overview">
-  <div class="loading" id="ov-loading"><div class="spin"></div><span>Loading your data...</span></div>
-  <div id="ov-body" style="display:none">
-    <div class="sl" id="ov-sl">Household snapshot</div>
-    <div class="mstrip" id="ov-metrics"></div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Spending this month <span class="ct-sub" id="ov-mo"></span></div>
-        <div class="cw" style="height:200px"><canvas id="ch-donut"></canvas></div>
-        <div class="leg" id="donut-leg"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Monthly total trend</div>
-        <div class="cw" style="height:200px"><canvas id="ch-trend"></canvas></div>
+<!-- ============================================================ -->
+<!-- TAB: TRANSACTIONS -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-transactions">
+
+  <div class="filter-bar">
+    <input type="text" class="filter-input" id="txn-search" placeholder="search description, vendor..." style="flex:1;min-width:200px;">
+    <select class="filter-select" id="txn-account">
+      <option value="">All accounts</option>
+      <option value="Chase 6576">Aaron Chase 6576</option>
+      <option value="Chase 9057">Aaron Chase 9057</option>
+      <option value="Chase 0593">Joint Chase 0593</option>
+      <option value="Chase 3754">Amanda Chase 3754</option>
+      <option value="CSR (Aaron)">CSR - Aaron</option>
+      <option value="CSP (Amanda)">CSP - Amanda</option>
+      <option value="Amex Gold">Amex Gold</option>
+    </select>
+    <select class="filter-select" id="txn-category">
+      <option value="">All categories</option>
+      <option>Groceries & Household</option><option>Costco</option>
+      <option>Restaurants & Bars</option><option>Amazon</option>
+      <option>Clothing</option><option>Entertainment</option><option>Gas</option>
+      <option>Subscriptions</option><option>Fixed</option><option>Home</option>
+      <option>Pet</option><option>Transport</option><option>Auto</option>
+      <option>Travel</option><option>Medical</option>
+      <option>Income -- Paycheck</option><option>Income -- Bonus</option>
+      <option>Income -- Reimbursement</option>
+      <option>Transfer</option><option>Savings</option><option>Investment</option>
+      <option>Loan Payment</option><option>Tax</option><option>Other</option>
+    </select>
+    <select class="filter-select" id="txn-month">
+      <option value="">All months</option>
+      <option value="2025-12">Dec 2025</option>
+      <option value="2025-12">Dec 2025</option>
+      <option value="2026-01">Jan 2026</option>
+      <option value="2026-02">Feb 2026</option>
+      <option value="2026-03">Mar 2026</option>
+      <option value="2026-04">Apr 2026</option>
+    </select>
+    <button class="filter-btn active" id="btn-flag-only">Flagged only</button>
+    <button class="filter-btn" id="btn-all-txn">Show all</button>
+  </div>
+
+  <div class="card" style="padding:0;">
+    <div class="table-scroll" id="txn-table-wrap">
+      <div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+    </div>
+    <div class="pagination" style="padding:12px 16px;" id="txn-pagination"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: REVIEW -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-review">
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px;">Needs Attention</div>
+      <div id="review-flags">
+        <div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
       </div>
     </div>
-    <div class="sl">Variable income -- remaining 2026</div>
-    <div class="card" id="ov-windfalls"></div>
-    <div class="sl">Brokerage obligation progress</div>
-    <div class="card" id="ov-brokprog"></div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px;">Known / Cleared</div>
+      <div id="review-cleared">
+        <div class="flag-row">
+          <div class="flag-icon ok">✓</div>
+          <div class="flag-body">
+            <div class="flag-title">Dec 22 Venmo +$2,452 → Aaron 6576</div>
+            <div class="flag-desc">Rose Bowl ticket reimbursement (2/3 of IU tickets Aaron bought on CSR)</div>
+          </div>
+        </div>
+        <div class="flag-row">
+          <div class="flag-icon ok">✓</div>
+          <div class="flag-body">
+            <div class="flag-title">Feb 20 +$1,577 → Joint 0593</div>
+            <div class="flag-desc">Federal tax refund via TurboTax/Intuit</div>
+          </div>
+        </div>
+        <div class="flag-row">
+          <div class="flag-icon ok">✓</div>
+          <div class="flag-body">
+            <div class="flag-title">Feb 24 +$604 → Joint 0593</div>
+            <div class="flag-desc">AZ state tax refund · moved from Scottsdale 2025</div>
+          </div>
+        </div>
+        <div class="flag-row">
+          <div class="flag-icon ok">✓</div>
+          <div class="flag-body">
+            <div class="flag-title">Apr 2 –$525 IL Dept of Revenue → Joint 0593</div>
+            <div class="flag-desc">IL state income tax owed</div>
+          </div>
+        </div>
+        <div class="flag-row">
+          <div class="flag-icon info">i</div>
+          <div class="flag-body">
+            <div class="flag-title">Mar 12 Venmo +$845 → Aaron 6576</div>
+            <div class="flag-desc">Unknown reimbursement — awaiting note from Aaron</div>
+          </div>
+        </div>
+        <div class="flag-row">
+          <div class="flag-icon ok">✓</div>
+          <div class="flag-body">
+            <div class="flag-title">All CC payments (Amex ACH, Payment to Chase)</div>
+            <div class="flag-desc">Always Transfer — never flag</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- TRANSACTIONS -->
-<div class="page" id="page-transactions">
-  <div class="sl">All transactions</div>
-  <div class="fbar">
-    <input class="fsearch" id="txn-search" placeholder="Search merchant, category..." oninput="filterTxns()">
-    <button class="fbtn active" onclick="setTxnFilter('all',this)">All</button>
-    <button class="fbtn" onclick="setTxnFilter('expense',this)">Expenses</button>
-    <button class="fbtn" onclick="setTxnFilter('income',this)">Income</button>
-    <button class="fbtn" onclick="setTxnFilter('flagged',this)">Flagged</button>
-    <select class="fbtn" id="txn-mo-filter" onchange="filterTxns()" style="padding:5px 10px">
+<!-- ============================================================ -->
+<!-- TAB: SPENDING -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-spending">
+
+  <div class="filter-bar">
+    <select class="filter-select" id="spend-month">
       <option value="">All months</option>
+      <option value="2025-12">Dec 2025</option>
+      <option value="2026-01">Jan 2026</option>
+      <option value="2026-02">Feb 2026</option>
+      <option value="2026-03">Mar 2026</option>
+      <option value="2026-04">Apr 2026</option>
     </select>
-    <select class="fbtn" id="txn-who-filter" onchange="filterTxns()" style="padding:5px 10px">
-      <option value="">All people</option>
-      <option value="Aaron">Aaron</option>
-      <option value="Amanda">Amanda</option>
-      <option value="Joint">Joint</option>
-    </select>
+    <button class="filter-btn active" id="btn-exclude-transfer">Hide transfers</button>
   </div>
-  <div class="card" style="padding:0;overflow:hidden">
-    <div style="overflow-x:auto">
-      <table class="txn-table" id="txn-table">
-        <thead>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px;">Budget vs. Actual</div>
+      <div id="spending-bva">
+        <div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">Fixed Obligations</div>
+        <div class="cf-row"><span class="cf-label">Student loan (Mohela)</span><span class="cf-val red">$881</span></div>
+        <div class="cf-row"><span class="cf-label">Auto loan (WF)</span><span class="cf-val red">$524</span></div>
+        <div class="cf-row"><span class="cf-label">IUL premium</span><span class="cf-val red">$500</span></div>
+        <div class="cf-row"><span class="cf-label">Verizon bundle</span><span class="cf-val red">$254</span></div>
+        <div class="cf-row"><span class="cf-label">Homeowners ins.</span><span class="cf-val red">$252</span></div>
+        <div class="cf-row"><span class="cf-label">Auto ins. (bundled)</span><span class="cf-val red">$57</span></div>
+        <div class="cf-row"><span class="cf-label">Health/dental/vision</span><span class="cf-val red">$224*</span></div>
+        <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;">
+          <div class="cf-row"><span class="cf-label" style="color:var(--text);">Total fixed</span><span class="cf-val red" style="font-size:13px;">$2,692</span></div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px;">* payroll deduction, not in bank statements</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">Top Vendors</div>
+        <div id="top-vendors">
+          <div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: CASH FLOW -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-cashflow">
+  <div class="grid-3">
+    <div class="card kpi">
+      <div class="kpi-label">Avg Monthly Income</div>
+      <div class="kpi-value green" id="cf-avg-income">—</div>
+      <div class="kpi-sub">from transactions</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Avg Monthly Spend</div>
+      <div class="kpi-value red" id="cf-avg-spend">—</div>
+      <div class="kpi-sub">excl. transfers + investments</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Avg Monthly Surplus</div>
+      <div class="kpi-value" id="cf-avg-surplus">—</div>
+      <div class="kpi-sub">before investments</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="section-title" style="margin-bottom:16px;">Monthly Cash Flow</div>
+    <div class="chart-box" style="height:260px;">
+      <canvas id="cf-chart" role="img" aria-label="Monthly cash flow chart"></canvas>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title" style="margin-bottom:12px;">Income Breakdown</div>
+      <div id="income-breakdown">
+        <div class="cf-row"><span class="cf-label">Aaron · QuickAsyst (weekly PPD)</span><span class="cf-val green">~$3,800/mo</span></div>
+        <div class="cf-row"><span class="cf-label">Amanda · Aidigital (bi-weekly)</span><span class="cf-val green">~$5,332/mo</span></div>
+        <div class="cf-row"><span class="cf-label">Amanda · Q1 bonus (Mar)</span><span class="cf-val green">+$2,425</span></div>
+        <div class="cf-row"><span class="cf-label">Aaron · commission (Jul + Dec)</span><span class="cf-val green">~$2,500 each</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:12px;">Month-by-Month</div>
+      <div id="cf-monthly-table">
+        <div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: INVESTMENTS -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-investments">
+  <div class="grid-4">
+    <div class="card kpi">
+      <div class="kpi-label">Total Retirement</div>
+      <div class="kpi-value accent" id="inv-retirement">—</div>
+      <div class="kpi-sub">401k + IRA</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Brokerage</div>
+      <div class="kpi-value accent" id="inv-brokerage">—</div>
+      <div class="kpi-sub">joint · FIL obligation</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">IUL Cash Value</div>
+      <div class="kpi-value accent" id="inv-iul">—</div>
+      <div class="kpi-sub">gross · MPI strategy</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">HSA</div>
+      <div class="kpi-value accent" id="inv-hsa">—</div>
+      <div class="kpi-sub">Aaron · Fidelity</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px;">Account Detail</div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Aaron · Live Nation 401(k)</div><div class="inv-detail">Fidelity · FID Freedom 2060 K6 · 91% stocks</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-aaron401k">—</div><div class="inv-change green" id="inv-aaron401k-chg">+7.3% YTD</div></div>
+      </div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Amanda · Elevation Marketing 401(k)</div><div class="inv-detail">Voya · Target Solution Income · 100% asset alloc</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-amanda401k1">—</div><div class="inv-change red" id="inv-amanda401k1-chg">–1.16% QTD</div></div>
+      </div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Amanda · Agital 401(k)</div><div class="inv-detail">Voya · American Funds 2060 · –3.30% QTD</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-amanda401k2">—</div><div class="inv-change red" id="inv-amanda401k2-chg">–3.30% QTD</div></div>
+      </div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Aaron · Rollover IRA</div><div class="inv-detail">Fidelity #241-326656 · Fidelity Balanced (90%)</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-ira">—</div><div class="inv-change" style="color:var(--text3);">Mar 31</div></div>
+      </div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Joint Brokerage (FIL)</div><div class="inv-detail">Fidelity #Z31-330773 · ETFs + money market</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-brok">—</div><div class="inv-change" style="color:var(--text3);">Mar 31</div></div>
+      </div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Aaron · HSA</div><div class="inv-detail">Fidelity #243-240714 · Gov't Cash Reserves</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-hsa2">—</div><div class="inv-change green">+$112 YTD</div></div>
+      </div>
+      <div class="inv-row">
+        <div class="inv-left"><div class="inv-name">Aaron · IUL (MPI strategy)</div><div class="inv-detail">Mutual of Omaha BU2556298 · $1.11M face · 0% floor / ~10% cap · policy loan = leverage</div></div>
+        <div class="inv-right"><div class="inv-bal" id="inv-iul2">—</div><div class="inv-change teal" style="color:var(--teal);">$32,764 avail.</div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">Allocation (combined)</div>
+        <div class="chart-box" style="height:180px;">
+          <canvas id="alloc-chart" role="img" aria-label="Investment allocation donut chart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">IUL · MPI Strategy</div>
+        <div class="cf-row"><span class="cf-label">Gross cash value</span><span class="cf-val accent" id="iul-gross">$96,396</span></div>
+        <div class="cf-row"><span class="cf-label">Policy loan (leverage)</span><span class="cf-val teal" id="iul-loan">$47,883</span></div>
+        <div class="cf-row"><span class="cf-label">Available cash value</span><span class="cf-val green" id="iul-avail">$32,764</span></div>
+        <div class="cf-row"><span class="cf-label">Avg crediting (100% par)</span><span class="cf-val green">8.16%</span></div>
+        <div class="cf-row"><span class="cf-label">2025 avg crediting</span><span class="cf-val green">~9.5%</span></div>
+        <div class="cf-row"><span class="cf-label">Death benefit</span><span class="cf-val accent">$1,110,168</span></div>
+        <div style="margin-top:8px;padding:8px;background:rgba(45,212,191,0.06);border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.6;">
+          Loan at ~4% · credited ~8–10% · spread = ~4–6% on borrowed capital · 0% floor protects against index losses
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">FIL Obligation Progress</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--text2);" id="fil-prog2">—</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--text3);">of $485,000</span>
+        </div>
+        <div class="progress-bar" style="height:6px;"><div class="progress-fill fill-blue" id="fil-bar2" style="width:0%;"></div></div>
+        <div style="margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--text3);">$2,500/mo required · can pause penalty-free · <span id="fil-eta2" style="color:var(--accent);">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: POINTS -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-points">
+  <div class="grid-4">
+    <div class="card kpi">
+      <div class="kpi-label">Total Points Value</div>
+      <div class="kpi-value amber" id="pts-total-val">—</div>
+      <div class="kpi-sub">optimized estimate</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Chase UR (pooled)</div>
+      <div class="kpi-value accent" id="pts-ur">—</div>
+      <div class="kpi-sub">CSR + CSP combined</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Amex MR</div>
+      <div class="kpi-value amber" id="pts-mr">—</div>
+      <div class="kpi-sub">hotel transfers only</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">AA AAdvantage</div>
+      <div class="kpi-value purple" id="pts-aa">—</div>
+      <div class="kpi-sub">protect for intl biz class</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px;">Balance Detail</div>
+      <div class="points-row">
+        <div><div class="points-program">Chase Sapphire Reserve (Aaron 1754)</div><div class="points-sub">UR · 1.5¢/pt portal · best: Hyatt transfer or AA/UA flights</div></div>
+        <div class="points-right"><div class="points-bal" id="pts-csr">36,000</div><div class="points-val" id="pts-csr-val">~$540–$720</div></div>
+      </div>
+      <div class="points-row">
+        <div><div class="points-program">Chase Sapphire Preferred (Amanda 5394)</div><div class="points-sub">UR · always pool to CSR first · never redeem at 1.25¢</div></div>
+        <div class="points-right"><div class="points-bal" id="pts-csp">46,000</div><div class="points-val" id="pts-csp-val">~$575 → $690 pooled</div></div>
+      </div>
+      <div class="points-row">
+        <div><div class="points-program">Amex Gold (Joint · Amanda AU)</div><div class="points-sub">MR · hotel transfers only (Hilton, Marriott) · never portal · never cash</div></div>
+        <div class="points-right"><div class="points-bal" id="pts-amex">106,000</div><div class="points-val" id="pts-amex-val">~$1,908–$2,120+</div></div>
+      </div>
+      <div class="points-row">
+        <div><div class="points-program">American Airlines AAdvantage</div><div class="points-sub">Protect for intl biz class (2¢+) · 160k ≈ 2 RT biz to Europe</div></div>
+        <div class="points-right"><div class="points-bal" id="pts-aa2">160,000</div><div class="points-val" id="pts-aa2-val">~$2,240–$4,000</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">Redemption Strategy</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);line-height:1.8;">
+          <div style="margin-bottom:6px;"><span style="color:var(--accent);">Chase UR →</span> Hyatt (hotels) or portal at 1.5¢ for AA/UA/SW flights. Pool CSP into CSR first.</div>
+          <div style="margin-bottom:6px;"><span style="color:var(--amber);">Amex MR →</span> Hilton or Marriott transfers only. Never portal. Never cash out at 1¢.</div>
+          <div style="margin-bottom:6px;"><span style="color:var(--purple);">AA miles →</span> Reserve for intl biz class (2¢+/mile). ORD→PHX burns ok if award space is right.</div>
+          <div><span style="color:var(--green);">Fly:</span> AA, UA, or SW only. No need to optimize other partners.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:10px;">2026 Projected Usage</div>
+        <div class="cf-row"><span class="cf-label">Europe days 8–13 (hotels)</span><span class="cf-val amber">–40–60k MR</span></div>
+        <div class="cf-row"><span class="cf-label">Phoenix Sep (flights)</span><span class="cf-val purple">–15–20k AA</span></div>
+        <div class="cf-row"><span class="cf-label">Phoenix Dec (flights)</span><span class="cf-val purple">–15–20k AA</span></div>
+        <div class="cf-row"><span class="cf-label">Mukwonago WI (possible)</span><span class="cf-val accent">0–5k UR</span></div>
+        <hr class="divider" style="margin:8px 0;">
+        <div class="cf-row"><span class="cf-label">Year-end Amex MR (est.)</span><span class="cf-val amber">~50–65k remaining</span></div>
+        <div class="cf-row"><span class="cf-label">Year-end Chase UR (est.)</span><span class="cf-val accent">~60–70k remaining</span></div>
+        <div class="cf-row"><span class="cf-label">Year-end AA miles (est.)</span><span class="cf-val purple">~120–130k remaining</span></div>
+      </div>
+      <div class="card" style="border-color:rgba(251,191,36,0.4);">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;">⚠ Lake Como Alert</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);line-height:1.6;">Book Hilton Lake Como for August NOW — ~25k MR. Verify award space in Hilton app BEFORE transferring Amex MR points.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0;">
+    <div class="section-title" style="margin-bottom:12px;">Points Balance History</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th class="r">Amex MR</th><th class="r">Chase UR (CSR)</th><th class="r">Chase UR (CSP)</th><th class="r">AA Miles</th><th>Notes</th>
+        </tr></thead>
+        <tbody id="pts-history">
           <tr>
-            <th>Date</th><th>Merchant</th><th>Category</th>
-            <th>Source</th><th>Who</th><th class="r">Amount</th><th>Status</th>
+            <td class="primary">Apr 2026</td>
+            <td class="r amber">106,000</td>
+            <td class="r accent">36,000</td>
+            <td class="r accent">46,000</td>
+            <td class="r" style="color:var(--purple);">160,000</td>
+            <td class="text3">Baseline</td>
           </tr>
-        </thead>
-        <tbody id="txn-body"></tbody>
+        </tbody>
       </table>
     </div>
-    <div style="padding:.75rem 1rem;border-top:1px solid var(--bg2);font-family:var(--mono);font-size:10px;color:var(--ink3)" id="txn-count"></div>
   </div>
 </div>
 
-<!-- REVIEW -->
-<div class="page" id="page-review">
-  <div class="sl">Needs review -- flagged transactions</div>
-  <div class="card" style="background:var(--amberl);border-color:#d4b870;margin-bottom:1rem">
-    <div style="font-size:13px;color:var(--amber);line-height:1.6">
-      These transactions were flagged because they are large, unusual, from P2P merchants, or from unknown vendors.
-      Add a note, adjust the net amount if something was reimbursed or split, then mark as Resolved directly in the Google Sheet Ledger tab (change review_status to "resolved").
-      Resolved items will disappear from this list on next refresh.
+<!-- ============================================================ -->
+<!-- TAB: TRAVEL -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-travel">
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="card kpi">
+      <div class="kpi-label">Cash budget remaining</div>
+      <div class="kpi-value green">~$2,000</div>
+      <div class="kpi-sub">annual target</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Trips planned</div>
+      <div class="kpi-value accent">5</div>
+      <div class="kpi-sub">2026</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">Points available</div>
+      <div class="kpi-value amber">348,000</div>
+      <div class="kpi-sub">all programs combined</div>
     </div>
   </div>
-  <div id="review-body"></div>
-</div>
 
-<!-- SPENDING -->
-<div class="page" id="page-spending">
-  <div class="loading" id="sp-loading"><div class="spin"></div><span>Loading...</span></div>
-  <div id="sp-body" style="display:none">
-    <div class="sl">Budget vs. actuals -- monthly average</div>
-    <div class="card" id="sp-bars"></div>
-    <div class="sl">Monthly breakdown by category</div>
-    <div class="card" style="padding:1.2rem">
-      <div class="cw" style="height:280px"><canvas id="ch-stack"></canvas></div>
-      <div class="leg" id="stack-leg" style="margin-top:.75rem"></div>
+  <div class="section-title" style="margin-bottom:12px;">2026 Travel Calendar</div>
+
+  <div class="trip-card upcoming">
+    <div class="trip-header">
+      <div class="trip-name">Shawnee National Forest Camping</div>
+      <div class="trip-date">MDW weekend · May 2026</div>
     </div>
-    <div class="sl">Category totals -- year to date</div>
-    <div class="card" id="sp-ytd"></div>
+    <div class="trip-meta">
+      <span class="pill pill-green">Camping</span>
+      <span class="trip-cost">$150–$300 out of pocket · gear + food + gas</span>
+    </div>
+    <div style="margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--text3);">No points play. Pure cash trip. ~1/3 of camping gear still needed.</div>
+  </div>
+
+  <div class="trip-card upcoming">
+    <div class="trip-header">
+      <div class="trip-name">Mukwonago, WI — Lake House</div>
+      <div class="trip-date">Late June 2026 · 5 days</div>
+    </div>
+    <div class="trip-meta">
+      <span class="pill pill-blue">Family</span>
+      <span class="trip-cost">$700–$900 pp · Airbnb $465 pp pre-set</span>
+    </div>
+    <div style="margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--text3);">Airbnb doesn't take points. Chase UR cash-back could offset if needed. Groceries + golf + food.</div>
+  </div>
+
+  <div class="trip-card upcoming" style="border-left-color:var(--amber);">
+    <div class="trip-header">
+      <div class="trip-name">Europe — Paris → Florence → Lake Como → Dolomites → Venice</div>
+      <div class="trip-date">Late July / Early Aug · ~13 days</div>
+    </div>
+    <div class="trip-meta">
+      <span class="pill pill-amber">Signature trip</span>
+      <span class="trip-cost free">Days 1–7: FIL covers flights + lodging</span>
+      <span class="trip-cost">Days 8–13: $800–$1,500 out of pocket</span>
+    </div>
+    <div style="margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--text3);line-height:1.6;">
+      Days 8–13 lodging: <span style="color:var(--amber);">Amex MR → Hilton/Marriott</span> (~40–60k MR). Chase UR backup.<br>
+      <span style="color:var(--amber);font-weight:500;">⚠ Book Lake Como Hilton NOW. Verify award space before transferring MR points.</span>
+    </div>
+  </div>
+
+  <div class="trip-card upcoming">
+    <div class="trip-header">
+      <div class="trip-name">Phoenix — Golf Trip</div>
+      <div class="trip-date">Sep 24 – Oct 4 · 10 days</div>
+    </div>
+    <div class="trip-meta">
+      <span class="pill pill-teal">Golf</span>
+      <span class="trip-cost free">Lodging: free</span>
+      <span class="trip-cost">$300–$600 out of pocket · flights + golf + food</span>
+    </div>
+    <div style="margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--text3);">AA miles or Chase portal (1.5¢) for ORD→PHX. Short hop = ~15–20k AA RT for 2 if award space available.</div>
+  </div>
+
+  <div class="trip-card upcoming">
+    <div class="trip-header">
+      <div class="trip-name">Phoenix — Wedding Weekend</div>
+      <div class="trip-date">Dec 3–6 · 2026</div>
+    </div>
+    <div class="trip-meta">
+      <span class="pill pill-purple">Wedding</span>
+      <span class="trip-cost free">Lodging: free</span>
+      <span class="trip-cost">$200–$400 out of pocket · flights + gift + food</span>
+    </div>
+    <div style="margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--text3);">Same play as September Phoenix. AA miles or Chase portal for ORD→PHX.</div>
   </div>
 </div>
 
-<!-- CASH FLOW -->
-<div class="page" id="page-cashflow">
-  <div class="sl">Apr through Dec 2026</div>
-  <div class="mstrip" id="cf-metrics"></div>
-  <div class="card" style="padding:1.2rem">
-    <div class="cw" style="height:240px"><canvas id="ch-cf"></canvas></div>
-  </div>
-  <div class="sl">Fixed obligations</div>
-  <div class="card" id="cf-fixed"></div>
-  <div class="sl">Property tax</div>
-  <div class="card" id="cf-tax"></div>
-</div>
+</div><!-- /main -->
 
-<!-- INVESTMENTS -->
-<div class="page" id="page-invest">
-  <div class="loading" id="inv-loading"><div class="spin"></div><span>Loading...</span></div>
-  <div id="inv-body" style="display:none">
-    <div class="sl">Account balances -- current</div>
-    <div class="mstrip" id="inv-metrics"></div>
-    <div class="sl">Performance over time</div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Combined wealth trend</div>
-        <div class="cw" style="height:200px"><canvas id="ch-wealth"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Asset allocation</div>
-        <div class="cw" style="height:200px"><canvas id="ch-alloc"></canvas></div>
-        <div class="leg" id="alloc-leg"></div>
-      </div>
-    </div>
-    <div class="sl">Account detail</div>
-    <div id="inv-accounts"></div>
-    <div class="sl">Brokerage obligation detail</div>
-    <div class="card" id="inv-brok"></div>
-  </div>
-</div>
-
-<!-- POINTS -->
-<div class="page" id="page-points">
-  <div class="sl">Current balances</div>
-  <div class="pgrid" id="pt-grid"></div>
-  <div class="g2">
-    <div class="card">
-      <div class="card-title">Portfolio value</div>
-      <div class="cw" style="height:180px"><canvas id="ch-pts"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">2026 redemption plan</div>
-      <div id="pt-plan"></div>
-    </div>
-  </div>
-  <div class="sl">Post-travel projected balances</div>
-  <div class="mstrip" id="pt-post"></div>
-  <div class="sl">Card strategy</div>
-  <div class="card" id="pt-strat"></div>
-</div>
-
-<!-- TRAVEL -->
-<div class="page" id="page-travel">
-  <div class="sl">2026 travel summary</div>
-  <div class="mstrip" id="tr-metrics"></div>
-  <div class="sl">Travel fund tracker</div>
-  <div class="card" id="tr-fund"></div>
-  <div class="sl">Trip breakdown</div>
-  <div id="tr-trips"></div>
-</div>
-
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ============================================================
-// SHEET PUBLISHED CSV URLS
-// ============================================================
-var SHEET_URLS = {
-  ledger:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=LEDGER_GID&single=true&output=csv",
-  balances:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=BALANCES_GID&single=true&output=csv",
-  invest:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=INVEST_GID&single=true&output=csv"
-};
-// NOTE: Replace LEDGER_GID, BALANCES_GID, INVEST_GID with actual
-// gid values from your sheet URL after running setupSheets().
 
-var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-var CAT_COLORS = {
-  "Groceries & Household":"#2d7a52","Costco":"#4a9e6e",
-  "Restaurants & Bars":"#c0392b","Amazon":"#d35400",
-  "Clothing":"#8e44ad","Entertainment":"#2980b9",
-  "Gas":"#7f8c8d","Subscriptions":"#e67e22",
-  "Fixed":"#1a4731","Home":"#27ae60",
-  "Pet":"#16a085","Transport":"#922b21",
-  "Auto":"#6c3483","Travel":"#1a2f5c",
-  "Medical":"#e74c3c","Other":"#95a5a6",
-  "Income -- Paycheck":"#1a4731","Income -- Bonus":"#2d7a52",
-  "Income -- Reimbursement":"#4a9e6e",
-  "Loan Payment":"#7f8c8d","Tax":"#c0392b","Savings":"#2980b9"
+// ============================================================
+// CONFIG — UPDATE THESE SHEET URLS AFTER PUBLISHING TO DRIVE
+// ============================================================
+const SHEETS = {
+  ledger:      'YOUR_LEDGER_CSV_URL',
+  balances:    'YOUR_BALANCES_CSV_URL',
+  investments: 'YOUR_INVESTMENTS_CSV_URL',
+  debts:       'YOUR_DEBTS_CSV_URL',
+  points:      'YOUR_POINTS_CSV_URL',
+  budget:      'YOUR_BUDGET_CSV_URL',
+  travel:      'YOUR_TRAVEL_CSV_URL',
 };
 
-var TARGETS = {
-  "Groceries & Household":550,"Costco":350,"Restaurants & Bars":300,
-  "Amazon":200,"Clothing":150,"Entertainment":250,"Gas":170,
-  "Subscriptions":170,"Fixed":495,"Home":100,"Pet":80,
-  "Transport":60,"Auto":0,"Travel":385,"Other":100
+// STATIC FALLBACK VALUES (from statements - update monthly)
+const STATIC = {
+  balances: {
+    '6576': { bal: 4500, date: 'Apr 2026', note: 'est.' },
+    '9057': { bal: 525,  date: 'Apr 2026', note: 'pass-thru' },
+    '0593': { bal: 2000, date: 'Apr 2026', note: 'est.' },
+    '3754': { bal: 2000, date: 'Apr 2026', note: 'est.' },
+    '6216': { bal: 20512, date: 'Mar 31 2026' },
+    '9777': { bal: 6189,  date: 'Mar 31 2026' },
+  },
+  investments: {
+    aaron401k:    { bal: 70899, date: 'Apr 16 2026', chg: '+7.3% YTD' },
+    amanda401k1:  { bal: 22416, date: 'Mar 31 2026', chg: '–1.16% QTD' },
+    amanda401k2:  { bal: 11984, date: 'Mar 31 2026', chg: '–3.30% QTD' },
+    ira:          { bal: 11570, date: 'Mar 31 2026' },
+    brokerage:    { bal: 46115, date: 'Mar 31 2026' },
+    hsa:          { bal: 13482, date: 'Mar 31 2026' },
+    iul_gross:    { bal: 96396, date: 'Apr 17 2026' },
+    iul_avail:    { bal: 32764, date: 'Apr 17 2026' },
+    iul_loan:     { bal: 47883, date: 'Apr 17 2026' },
+  },
+  debts: {
+    mohela:     { bal: 86567, date: 'Apr 17 2026' },
+    aidvantage: { bal: 26687, date: 'Apr 17 2026' },
+    auto:       { bal: 24465, date: 'Apr 2 2026' },
+    iulloan:    { bal: 47883, date: 'Apr 17 2026' },
+  },
+  points: {
+    csr: 36000, csp: 46000, amex: 106000, aa: 160000,
+  }
 };
 
-var DATA = { ledger:[], balances:[], invest:[] };
-var CHARTS = {};
-var TXN_FILTER = "all";
-var ALL_TXNS = [];
-
 // ============================================================
-// HELPERS
+// UTILITIES
 // ============================================================
-function q(id) { return document.getElementById(id); }
-function fmt(n) { return "$" + Math.round(Math.abs(n)).toLocaleString(); }
-function fmtD(n) { return "$" + Math.abs(n).toFixed(2); }
-function fmtPts(n) { return Math.round(n).toLocaleString(); }
-function dc(id) { if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; } }
+const $ = id => document.getElementById(id);
+const fmt = (n, dec=0) => n == null ? '—' : '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+const fmtN = n => n == null ? '—' : n.toLocaleString('en-US');
+const fmtPct = n => n == null ? '—' : (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
 
-function parseCSV(txt) {
-  var lines = txt.trim().split("\n");
-  if (!lines.length) return [];
-  var header = splitLine(lines[0]);
-  var rows = [];
-  for (var i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
-    var vals = splitLine(lines[i]);
-    var row = {};
-    for (var j = 0; j < header.length; j++) {
-      row[header[j].trim()] = (vals[j] || "").trim();
+async function fetchCSV(url) {
+  if (!url || url.startsWith('YOUR_')) return null;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const text = await r.text();
+    return parseCSV(text);
+  } catch(e) { return null; }
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
+  return lines.slice(1).map(line => {
+    const vals = [];
+    let cur = '', inQ = false;
+    for (const ch of line) {
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+      else cur += ch;
     }
-    rows.push(row);
-  }
-  return rows;
-}
-
-function splitLine(line) {
-  var res = [], cur = "", inQ = false;
-  for (var i = 0; i < line.length; i++) {
-    var c = line[i];
-    if (c === '"') { inQ = !inQ; continue; }
-    if (c === ',' && !inQ) { res.push(cur); cur = ""; continue; }
-    cur += c;
-  }
-  res.push(cur);
-  return res;
-}
-
-function money(s) {
-  if (!s) return 0;
-  return parseFloat(s.toString().replace(/[$,]/g,"")) || 0;
-}
-
-function showLoad(id) { var el = q(id+"-loading"); if(el) el.style.display="flex"; }
-function hideLoad(id, bodyId) {
-  var el = q(id+"-loading"); if(el) el.style.display="none";
-  var bd = q(bodyId||id+"-body"); if(bd) bd.style.display="block";
-}
-function showErr(id, msg) {
-  var el = q(id+"-loading");
-  if (el) el.innerHTML = '<div class="errbx">'+msg+'</div>';
-}
-
-// ============================================================
-// FETCH
-// ============================================================
-function fetchCSV(url) {
-  return fetch(url).then(function(r) {
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return r.text();
-  }).then(parseCSV);
-}
-
-function loadAll() {
-  q("sync-time").textContent = "loading...";
-  // For now use the existing published URLs for balances
-  // Ledger will be added once setupSheets creates the new tab structure
-  var balURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=730337422&single=true&output=csv";
-
-  fetchCSV(balURL).then(function(r) {
-    DATA.balances = r;
-    renderInvestments();
-    renderPoints();
-    renderCashFlow();
-    renderTravel();
-    q("sync-time").textContent = new Date().toLocaleTimeString();
-  }).catch(function(e) {
-    q("sync-time").textContent = "error";
-    console.error(e);
+    vals.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = (vals[i] || '').replace(/^"|"$/g, '').trim(); });
+    return obj;
   });
-
-  // Render static/computed tabs immediately
-  renderOverviewStatic();
-  renderSpendingStatic();
 }
 
-// ============================================================
-// RENDER OVERVIEW (uses ledger data when available, fallback to static)
-// ============================================================
-function renderOverviewStatic() {
-  // Static financial data we know
-  var BASE = 8800, FIXED = 5938;
-  var checking = 9000, hysa = 20000, fil = 25000;
-  var liquid = checking + hysa + fil;
-  var brokbal = 47661;
-
-  q("ov-metrics").innerHTML = [
-    {l:"Base take-home/mo", v:fmt(BASE), s:"combined", c:""},
-    {l:"Fixed obligations/mo", v:fmt(FIXED), s:"non-negotiable", c:"r"},
-    {l:"After fixed/mo", v:fmt(BASE-FIXED), s:"before bonuses", c:"a"},
-    {l:"Liquid assets", v:fmt(liquid), s:"checking + HYSA + FIL pending", c:"g"},
-    {l:"Net worth (excl. home)", v:fmt(229000), s:"assets minus loans", c:"g"}
-  ].map(function(m) {
-    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v '+m.c+'">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
-  }).join("");
-
-  // Windfalls
-  var now = new Date(); var mo = now.getMonth();
-  var wf = [
-    {mo:5, l:"June -- FIL reimbursement", v:25000},
-    {mo:5, l:"June -- Amanda Q2 bonus", v:2150},
-    {mo:6, l:"July -- Aaron H1 commission", v:2500},
-    {mo:8, l:"September -- Amanda Q3 bonus", v:2150},
-    {mo:11,l:"December -- Aaron H2 + Amanda Q4", v:4650}
-  ].filter(function(w){return w.mo >= mo;});
-  var wfTotal = wf.reduce(function(a,w){return a+w.v;},0);
-  q("ov-windfalls").innerHTML = wf.map(function(w){
-    return '<div class="row"><span class="rl">'+w.l+'</span><span class="ra g">'+fmt(w.v)+' net est.</span></div>';
-  }).join("") + '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total remaining</span><span class="ra g" style="font-size:1rem">'+fmt(wfTotal)+'</span></div>';
-
-  // Brokerage progress
-  var pct = Math.min(100, Math.round(brokbal/485000*100));
-  var rem = 485000 - brokbal;
-  var mos = Math.ceil(rem/2500);
-  var yrs = Math.floor(mos/12), moRem = mos%12;
-  q("ov-brokprog").innerHTML =
-    '<div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:13px">' +
-    '<span>FIL obligation progress</span><span style="font-family:var(--mono);font-weight:500">'+fmt(brokbal)+' of $485,000</span></div>' +
-    '<div class="inv-bar"><div class="inv-fill" style="width:'+pct+'%;background:var(--green2)"></div></div>' +
-    '<div style="display:flex;justify-content:space-between;margin-top:.35rem;font-size:11px;color:var(--ink3)">' +
-    '<span>'+pct+'% complete</span>' +
-    '<span>~'+yrs+'yr'+(moRem>0?' '+moRem+'mo':'')+' remaining at $2,500/mo</span></div>';
-
-  // Placeholder donut and trend (will be real once Ledger tab is published)
-  var cats = Object.keys(TARGETS).filter(function(c){return TARGETS[c]>0;});
-  var vals = cats.map(function(c){return TARGETS[c];});
-  dc("ch-donut");
-  CHARTS["ch-donut"] = new Chart(q("ch-donut"),{
-    type:"doughnut",
-    data:{labels:cats,datasets:[{data:vals,backgroundColor:cats.map(function(c){return CAT_COLORS[c]||"#888";}),borderWidth:2,borderColor:"#f7f4ef"}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:"62%",
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw)+"/mo target";}}}}}
-  });
-  q("donut-leg").innerHTML = cats.slice(0,8).map(function(c){
-    return '<div class="leg-i"><div class="leg-d" style="background:'+(CAT_COLORS[c]||"#888")+'"></div>'+c.split(" &")[0]+'</div>';
-  }).join("");
-  q("ov-mo").textContent = "Budget targets";
-
-  // Trend placeholder
-  dc("ch-trend");
-  CHARTS["ch-trend"] = new Chart(q("ch-trend"),{
-    type:"line",
-    data:{labels:["Jan","Feb","Mar"],
-      datasets:[{label:"Spending",data:[7120,5290,7000],
-        borderColor:"#1a4731",backgroundColor:"rgba(26,71,49,.08)",
-        borderWidth:2,pointBackgroundColor:"#1a4731",pointRadius:4,fill:true,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}},
-      scales:{x:{grid:{display:false},ticks:{font:{family:"DM Mono",size:10},color:"#888"}},
-        y:{grid:{color:"rgba(0,0,0,0.04)"},ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"}}}}
-  });
-
-  hideLoad("ov", "ov-body");
-}
-
-// ============================================================
-// RENDER SPENDING (static budget view)
-// ============================================================
-function renderSpendingStatic() {
-  // Jan-Feb actuals we know
-  var actuals = {
-    "Groceries & Household": {jan:907, feb:1039},
-    "Costco":                {jan:371, feb:818},
-    "Restaurants & Bars":   {jan:855, feb:492},
-    "Amazon":                {jan:384, feb:269},
-    "Clothing":              {jan:129, feb:293},
-    "Entertainment":         {jan:482, feb:213},
-    "Gas":                   {jan:155, feb:155},
-    "Subscriptions":         {jan:170, feb:170},
-    "Fixed":                 {jan:495, feb:495},
-    "Home":                  {jan:0,   feb:299},
-    "Pet":                   {jan:0,   feb:109},
-    "Transport":             {jan:130, feb:35},
-    "Auto":                  {jan:0,   feb:677},
-    "Travel":                {jan:0,   feb:0},
-    "Other":                 {jan:293, feb:229}
+function categoryColor(cat) {
+  const map = {
+    'Groceries & Household':'#34d399','Costco':'#22c55e','Restaurants & Bars':'#fbbf24',
+    'Amazon':'#fb923c','Clothing':'#f472b6','Entertainment':'#a78bfa',
+    'Gas':'#fbbf24','Subscriptions':'#4ade80','Fixed':'#94a3b8',
+    'Home':'#60a5fa','Pet':'#34d399','Transport':'#38bdf8',
+    'Auto':'#fbbf24','Travel':'#fb923c','Medical':'#f87171',
+    'Income -- Paycheck':'#22c55e','Income -- Bonus':'#16a34a',
+    'Income -- Reimbursement':'#2dd4bf','Transfer':'#4a5878',
+    'Savings':'#818cf8','Investment':'#2dd4bf','Loan Payment':'#f87171',
+    'Tax':'#e879f9','Other':'#94a3b8',
   };
-
-  var bars = q("sp-bars");
-  bars.innerHTML = "";
-  Object.keys(TARGETS).forEach(function(cat) {
-    var a = actuals[cat] || {jan:0,feb:0};
-    var avg = Math.round((a.jan + a.feb) / 2);
-    var tgt = TARGETS[cat];
-    var pct = tgt > 0 ? Math.min(100, Math.round(avg/tgt*100)) : 0;
-    var over = tgt > 0 && avg > tgt;
-    var diff = tgt > 0 ? Math.abs(tgt-avg) : 0;
-    var tagTxt = tgt > 0 ? (over ? "+"+fmt(avg-tgt)+" over" : "-"+fmt(tgt-avg)+" under") : "no target";
-    var tagCls = tgt > 0 ? (over ? "tag-r" : "tag-g") : "tag-n";
-    bars.innerHTML += '<div class="prow">' +
-      '<span class="pl">'+cat+'</span>' +
-      '<div class="pt"><div class="pf" style="width:'+pct+'%;background:'+(CAT_COLORS[cat]||"#888")+'"></div></div>' +
-      '<span class="pa">'+(avg>0?fmt(avg)+"/mo avg":"--")+'</span>' +
-      '<span class="tag '+tagCls+'">'+tagTxt+'</span></div>';
-  });
-
-  // Stacked chart
-  var months = ["Jan","Feb"];
-  dc("ch-stack");
-  CHARTS["ch-stack"] = new Chart(q("ch-stack"),{
-    type:"bar",
-    data:{labels:months,datasets:Object.keys(actuals).map(function(cat){
-      return {label:cat,data:[actuals[cat].jan,actuals[cat].feb],backgroundColor:CAT_COLORS[cat]||"#888",borderWidth:0};
-    })},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{stacked:true,ticks:{font:{family:"DM Mono",size:10},color:"#888"},grid:{display:false}},
-        y:{stacked:true,ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"},grid:{color:"rgba(0,0,0,0.04)"}}}}
-  });
-  q("stack-leg").innerHTML = Object.keys(actuals).map(function(c){
-    return '<div class="leg-i"><div class="leg-d" style="background:'+(CAT_COLORS[c]||"#888")+'"></div>'+c.split(" &")[0]+'</div>';
-  }).join("");
-
-  // YTD totals
-  var ytd = q("sp-ytd");
-  ytd.innerHTML = "";
-  var ytdTotal = 0;
-  Object.keys(actuals).forEach(function(cat) {
-    var a = actuals[cat];
-    var total = a.jan + a.feb;
-    ytdTotal += total;
-    ytd.innerHTML += '<div class="row"><span class="rl">'+cat+'</span><span class="ra">'+fmt(total)+'</span></div>';
-  });
-  ytd.innerHTML += '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">YTD total (Jan-Feb)</span><span class="ra" style="font-size:1rem">'+fmt(ytdTotal)+'</span></div>';
-
-  hideLoad("sp", "sp-body");
+  return map[cat] || '#94a3b8';
 }
 
 // ============================================================
-// CASH FLOW
+// TAB NAVIGATION
 // ============================================================
-function renderCashFlow() {
-  var BASE = 8800, FIXED = 5938;
-  var cfMos = [
-    {mo:"Apr",bon:0,    fil:0,    tr:0,   tx:0},
-    {mo:"May",bon:0,    fil:0,    tr:405, tx:0},
-    {mo:"Jun",bon:2150, fil:25000,tr:1290,tx:6300},
-    {mo:"Jul",bon:2500, fil:0,    tr:0,   tx:0},
-    {mo:"Aug",bon:0,    fil:0,    tr:1435,tx:0},
-    {mo:"Sep",bon:2150, fil:0,    tr:1100,tx:5700},
-    {mo:"Oct",bon:0,    fil:0,    tr:0,   tx:0},
-    {mo:"Nov",bon:0,    fil:0,    tr:0,   tx:0},
-    {mo:"Dec",bon:4650, fil:0,    tr:400, tx:0}
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    $('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ============================================================
+// OVERVIEW — populate from static
+// ============================================================
+function populateOverview() {
+  const S = STATIC;
+  const totalLiquid = Object.values(S.balances).reduce((a, b) => a + b.bal, 0);
+  const totalInv = S.investments.aaron401k.bal + S.investments.amanda401k1.bal +
+    S.investments.amanda401k2.bal + S.investments.ira.bal + S.investments.brokerage.bal +
+    S.investments.hsa.bal + S.investments.iul_gross.bal;
+  const totalDebt = S.debts.mohela.bal + S.debts.aidvantage.bal + S.debts.auto.bal;
+  const netWorth = totalLiquid + totalInv - totalDebt;
+
+  $('kpi-liquid').textContent = fmt(totalLiquid);
+  $('kpi-investments').textContent = fmt(totalInv);
+  $('kpi-debt').textContent = fmt(totalDebt);
+  const nwEl = $('kpi-networth');
+  nwEl.textContent = fmt(netWorth);
+  nwEl.className = 'kpi-value ' + (netWorth >= 0 ? 'green' : 'red');
+
+  // Bank balances
+  for (const [key, val] of Object.entries(S.balances)) {
+    const el = $('bal-' + key); const de = $('date-' + key);
+    if (el) el.textContent = fmt(val.bal);
+    if (de) de.textContent = val.date || '';
+  }
+
+  // Debts
+  for (const [key, val] of Object.entries(S.debts)) {
+    const el = $('bal-' + key); const de = $('date-' + key);
+    if (el) el.textContent = '–' + fmt(val.bal);
+    if (de && de.id !== 'date-iulloan') de.textContent = val.date || '';
+  }
+
+  // FIL progress
+  const filPct = (S.investments.brokerage.bal / 485000 * 100).toFixed(1);
+  const filMonths = Math.ceil((485000 - S.investments.brokerage.bal) / 2500);
+  const filETA = new Date(); filETA.setMonth(filETA.getMonth() + filMonths);
+  const etaStr = filETA.toLocaleDateString('en-US', {month:'short', year:'numeric'});
+  ['fil-progress','fil-prog2'].forEach(id => {
+    const el = $(id);
+    if(el) el.textContent = fmt(S.investments.brokerage.bal) + ' invested';
+  });
+  ['fil-bar','fil-bar2'].forEach(id => {
+    const el = $(id);
+    if(el) el.style.width = Math.min(100, filPct) + '%';
+  });
+  ['fil-eta','fil-eta2'].forEach(id => {
+    const el = $(id);
+    if(el) el.textContent = '~' + filMonths + ' months remaining · est. ' + etaStr;
+  });
+
+  // Net worth bar
+  const segments = [
+    { label: 'Liquid', val: totalLiquid, color: '#22c55e' },
+    { label: 'Investments', val: totalInv, color: '#4f8ef7' },
+    { label: 'Debt', val: -totalDebt, color: '#f87171' },
   ];
-  var totB = 0, totV = 0, totTx = 0, totTr = 0, totNet = 0;
-  cfMos.forEach(function(m){
-    totB  += BASE;
-    totV  += m.bon + m.fil;
-    totTx += m.tx;
-    totTr += m.tr;
-    totNet += (BASE + m.bon + m.fil) - (FIXED + m.tx + m.tr);
+  const posTotal = totalLiquid + totalInv;
+  const bar = $('nw-bar');
+  const legend = $('nw-legend');
+  bar.innerHTML = '';
+  legend.innerHTML = '';
+  segments.filter(s => s.val > 0).forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'nw-segment';
+    div.style.width = (s.val / posTotal * 100).toFixed(1) + '%';
+    div.style.background = s.color;
+    bar.appendChild(div);
   });
+  const debtSeg = document.createElement('div');
+  debtSeg.className = 'nw-segment';
+  debtSeg.style.width = (totalDebt / posTotal * 100).toFixed(1) + '%';
+  debtSeg.style.background = '#f87171';
+  debtSeg.style.opacity = '0.4';
+  bar.appendChild(debtSeg);
+  legend.innerHTML = segments.map(s =>
+    `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;">
+      <span style="display:flex;align-items:center;gap:6px;color:var(--text2);">
+        <span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block;"></span>${s.label}
+      </span>
+      <span style="color:${s.val>=0?'var(--text)':'var(--red)'};">${s.val>=0?'':'-'}${fmt(Math.abs(s.val))}</span>
+    </div>`
+  ).join('');
 
-  q("cf-metrics").innerHTML = [
-    {l:"Combined base (9mo)", v:fmt(totB), s:"", c:""},
-    {l:"Variable + FIL (9mo)", v:fmt(totV), s:"bonuses + commission + FIL", c:"g"},
-    {l:"Fixed out (9mo)", v:fmt(FIXED*9), s:"", c:"r"},
-    {l:"Travel (9mo)", v:fmt(totTr), s:"all 5 trips", c:"r"},
-    {l:"Tax (9mo)", v:fmt(totTx), s:"property tax installments", c:"r"},
-    {l:"Projected net", v:fmt(totNet), s:"Apr-Dec after everything", c:"g"}
-  ].map(function(m){
-    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v '+m.c+'">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
-  }).join("");
+  // HYSA for property tax widget
+  const hysa = S.balances['6216'];
+  if(hysa) $('ptax-hysa').textContent = fmt(hysa.bal);
 
-  dc("ch-cf");
-  CHARTS["ch-cf"] = new Chart(q("ch-cf"),{
-    type:"bar",
-    data:{labels:cfMos.map(function(m){return m.mo;}),
-      datasets:[
-        {label:"Base",data:cfMos.map(function(){return BASE;}),backgroundColor:"#b4b2a9",borderWidth:0},
-        {label:"Bonus/Comm",data:cfMos.map(function(m){return m.bon;}),backgroundColor:"#2d7a52",borderWidth:0},
-        {label:"FIL",data:cfMos.map(function(m){return m.fil;}),backgroundColor:"#9fe1cb",borderWidth:0}
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+fmt(c.raw);}}}},
-      scales:{x:{stacked:true,ticks:{font:{family:"DM Mono",size:10},color:"#888"},grid:{display:false}},
-        y:{stacked:true,ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"},grid:{color:"rgba(0,0,0,0.04)"}}}}
-  });
+  // Cash flow estimates
+  const fixedMonthly = 881 + 524 + 500 + 254 + 252 + 57; // excl health (payroll deducted)
+  $('cf-fixed').textContent = '–' + fmt(fixedMonthly);
 
-  q("cf-fixed").innerHTML = [
-    ["Student loan -- Laurel Road (4.75%)",881],
-    ["Car payment -- 4Runner (Wells Fargo 6.59%)",524],
-    ["IUL policy -- Mutual of Omaha",500],
-    ["Brokerage obligation -- FIL",2500],
-    ["Health / dental / vision",224],
-    ["Auto + homeowners insurance",309],
-    ["Property tax reserve",1000]
-  ].map(function(r){return '<div class="row"><span class="rl">'+r[0]+'</span><span class="ra">'+fmt(r[1])+'</span></div>';}).join("") +
-  '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total</span><span class="ra" style="font-size:1rem">'+fmt(5938)+'</span></div>';
-
-  q("cf-tax").innerHTML =
-    '<div class="card-title">Kane County -- est. $12,000 total</div>' +
-    '<div class="row"><span class="rl">1st installment (~June 3)</span><span class="ra r">~$6,300</span></div>' +
-    '<div class="row"><span class="rl">2nd installment (~Sept 3)</span><span class="ra r">~$5,700</span></div>' +
-    '<div class="row"><span class="rl">Pay via CC? (2.1% fee = $252)</span><span style="font-size:11px;color:var(--ink3)">Fee exceeds MR value -- pay cash</span></div>' +
-    '<div class="row"><span class="rl">$1,000/mo reserve building now</span><span class="ra g">+$8,000 by Dec</span></div>';
+  $('last-sync').textContent = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 }
 
 // ============================================================
-// INVESTMENTS
+// INVESTMENTS TAB
 // ============================================================
-function renderInvestments() {
-  var accounts = [
-    {name:"401k -- Aaron",     balance:70000,  color:"#1a4731"},
-    {name:"401k -- Amanda",    balance:36000,  color:"#2d7a52"},
-    {name:"Roth IRA",          balance:12273,  color:"#2980b9"},
-    {name:"Brokerage (FIL)",   balance:47661,  color:"#8e44ad"},
-    {name:"IUL cash value",    balance:50000,  color:"#d35400"},
-    {name:"HSA",               balance:13482,  color:"#16a085"}
-  ];
-  var totalInv = accounts.reduce(function(a,ac){return a+ac.balance;},0);
-
-  q("inv-metrics").innerHTML = accounts.map(function(a){
-    return '<div class="mc"><div class="mc-l">'+a.name+'</div><div class="mc-v">'+fmt(a.balance)+'</div><div class="mc-s">current balance</div></div>';
-  }).join("") + '<div class="mc"><div class="mc-l">Total invested</div><div class="mc-v g">'+fmt(totalInv)+'</div><div class="mc-s">excl. home</div></div>';
-
-  // Wealth trend placeholder
-  dc("ch-wealth");
-  CHARTS["ch-wealth"] = new Chart(q("ch-wealth"),{
-    type:"line",
-    data:{labels:["Jan","Feb","Mar","Apr"],
-      datasets:[{label:"Total",data:[220000,223000,226000,229000],
-        borderColor:"#1a4731",backgroundColor:"rgba(26,71,49,.08)",borderWidth:2,
-        pointBackgroundColor:"#1a4731",pointRadius:4,fill:true,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}},
-      scales:{x:{grid:{display:false},ticks:{font:{family:"DM Mono",size:10},color:"#888"}},
-        y:{grid:{color:"rgba(0,0,0,0.04)"},ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"}}}}
-  });
+function populateInvestments() {
+  const I = STATIC.investments;
+  const retirement = I.aaron401k.bal + I.amanda401k1.bal + I.amanda401k2.bal + I.ira.bal;
+  $('inv-retirement').textContent = fmt(retirement);
+  $('inv-brokerage').textContent = fmt(I.brokerage.bal);
+  $('inv-iul').textContent = fmt(I.iul_gross.bal);
+  $('inv-hsa').textContent = fmt(I.hsa.bal);
+  $('inv-aaron401k').textContent = fmt(I.aaron401k.bal);
+  $('inv-amanda401k1').textContent = fmt(I.amanda401k1.bal);
+  $('inv-amanda401k2').textContent = fmt(I.amanda401k2.bal);
+  $('inv-ira').textContent = fmt(I.ira.bal);
+  $('inv-brok').textContent = fmt(I.brokerage.bal);
+  $('inv-hsa2').textContent = fmt(I.hsa.bal);
+  $('inv-iul2').textContent = fmt(I.iul_gross.bal);
+  $('iul-gross').textContent = fmt(I.iul_gross.bal);
+  $('iul-loan').textContent = fmt(I.iul_loan.bal);
+  $('iul-avail').textContent = fmt(I.iul_avail.bal);
 
   // Allocation donut
-  dc("ch-alloc");
-  CHARTS["ch-alloc"] = new Chart(q("ch-alloc"),{
-    type:"doughnut",
-    data:{labels:accounts.map(function(a){return a.name;}),
-      datasets:[{data:accounts.map(function(a){return a.balance;}),
-        backgroundColor:accounts.map(function(a){return a.color;}),borderWidth:2,borderColor:"#f7f4ef"}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:"60%",
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}}}
+  const allocData = [
+    { label: 'US Stocks', pct: 58, color: '#4f8ef7' },
+    { label: 'IUL', pct: 19, color: '#2dd4bf' },
+    { label: 'Bonds', pct: 12, color: '#a78bfa' },
+    { label: 'Intl Stocks', pct: 6, color: '#fbbf24' },
+    { label: 'Cash/MMkt', pct: 5, color: '#94a3b8' },
+  ];
+  const ctx = $('alloc-chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: allocData.map(d => d.label),
+      datasets: [{ data: allocData.map(d => d.pct), backgroundColor: allocData.map(d => d.color), borderWidth: 1, borderColor: '#0f1525' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: {
+        legend: { display: true, position: 'right', labels: { color: '#8a97b8', font: { family: "'DM Mono', monospace", size: 11 }, boxWidth: 10, padding: 8 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}%` } }
+      }
+    }
   });
-  q("alloc-leg").innerHTML = accounts.map(function(a){
-    return '<div class="leg-i"><div class="leg-d" style="background:'+a.color+'"></div>'+a.name.split(" --")[0]+' '+fmt(a.balance)+'</div>';
-  }).join("");
-
-  // Account detail cards
-  q("inv-accounts").innerHTML = accounts.map(function(a){
-    var pct = Math.round(a.balance/totalInv*100);
-    return '<div class="card" style="margin-bottom:.75rem">' +
-      '<div style="display:flex;justify-content:space-between;align-items:baseline">' +
-      '<span style="font-weight:500">'+a.name+'</span>' +
-      '<span style="font-family:var(--mono);font-size:1.1rem">'+fmt(a.balance)+'</span></div>' +
-      '<div class="inv-bar" style="margin-top:.5rem"><div class="inv-fill" style="width:'+pct+'%;background:'+a.color+'"></div></div>' +
-      '<div style="font-size:11px;color:var(--ink3);margin-top:.3rem">'+pct+'% of total portfolio</div>' +
-      '<div style="font-size:12px;color:var(--ink3);margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--bg2)">Upload your '+a.name+' statement PDF to Claude to see performance history, contributions vs. gains, and trend charts.</div>' +
-      '</div>';
-  }).join("");
-
-  // Brokerage obligation
-  var brok = 47661;
-  var pct = Math.min(100, Math.round(brok/485000*100));
-  var rem = 485000 - brok;
-  var mos = Math.ceil(rem/2500);
-  var yrs = Math.floor(mos/12), moRem = mos%12;
-  q("inv-brok").innerHTML =
-    '<div class="card-title">FIL obligation -- $2,500/mo until $485,000 invested</div>' +
-    '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:.5rem">' +
-    '<span>'+fmt(brok)+' contributed</span><span style="font-family:var(--mono)">'+pct+'%</span></div>' +
-    '<div class="inv-bar"><div class="inv-fill" style="width:'+pct+'%;background:var(--green2)"></div></div>' +
-    '<div style="display:flex;justify-content:space-between;margin-top:.3rem;font-size:11px;color:var(--ink3)">' +
-    '<span>'+fmt(rem)+' remaining</span><span>~'+yrs+'yr'+(moRem>0?' '+moRem+'mo':'')+' at $2,500/mo</span></div>' +
-    '<div class="row" style="margin-top:.75rem"><span class="rl">Obligation can be paused penalty-free if needed</span><span class="tag tag-g">flexible</span></div>' +
-    '<div class="row"><span class="rl">Extra contributions (from bonuses/commission) accelerate payoff</span><span class="tag tag-b">strategy</span></div>';
-
-  hideLoad("inv", "inv-body");
 }
 
 // ============================================================
-// POINTS
+// POINTS TAB
 // ============================================================
-function renderPoints() {
-  var mr=106000, csr=36000, csp=46000, aa=160000;
-  var urP = csr+csp;
+function populatePoints() {
+  const P = STATIC.points;
+  const total = P.csr + P.csp + P.amex + P.aa;
+  const urTotal = P.csr + P.csp;
+  const totalVal = (urTotal * 0.015) + (P.amex * 0.018) + (P.aa * 0.020);
+  $('pts-total-val').textContent = '$' + Math.round(totalVal).toLocaleString();
+  $('pts-ur').textContent = fmtN(urTotal) + ' pts';
+  $('pts-mr').textContent = fmtN(P.amex) + ' pts';
+  $('pts-aa').textContent = fmtN(P.aa) + ' miles';
+  $('pts-csr').textContent = fmtN(P.csr);
+  $('pts-csp').textContent = fmtN(P.csp);
+  $('pts-amex').textContent = fmtN(P.amex);
+  $('pts-aa2').textContent = fmtN(P.aa);
+}
 
-  q("pt-grid").innerHTML = [
-    {n:"Amex MR -- Gold (joint)",v:fmtPts(mr),s:"~"+fmt(mr*.018)+" at 1.8c/pt"},
-    {n:"Chase UR -- CSR (Aaron)",v:fmtPts(csr),s:"Pool Amanda's CSP here first"},
-    {n:"Chase UR -- CSP (Amanda)",v:fmtPts(csp),s:"Transfer to CSR before redeeming"},
-    {n:"Chase UR -- Pooled",v:fmtPts(urP),s:"~"+fmt(urP*.015)+" at 1.5c/pt"},
-    {n:"AA AAdvantage",v:fmtPts(aa),s:"Protect for intl biz class 2027+"}
-  ].map(function(p){
-    return '<div class="pcell"><div class="pn">'+p.n+'</div><div class="pv">'+p.v+'</div><div class="ps">'+p.s+'</div></div>';
-  }).join("");
+// ============================================================
+// TRANSACTIONS — load from CSV or show placeholder
+// ============================================================
+let ALL_TXN = [];
+let txnPage = 0;
+const TXN_PAGE_SIZE = 50;
 
-  dc("ch-pts");
-  CHARTS["ch-pts"] = new Chart(q("ch-pts"),{
-    type:"bar",
-    data:{labels:["Amex MR","Chase UR (pooled)","AA miles"],
-      datasets:[{data:[Math.round(mr*.018),Math.round(urP*.015),Math.round(aa*.014)],
-        backgroundColor:["#1a4731","#1a2f5c","#6c3483"],borderWidth:0,borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}},
-      scales:{x:{ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"},grid:{color:"rgba(0,0,0,0.04)"}},
-        y:{ticks:{font:{family:"DM Mono",size:10},color:"#888"},grid:{display:false}}}}
+function renderTransactions() {
+  const search = $('txn-search').value.toLowerCase();
+  const acct = $('txn-account').value;
+  const cat = $('txn-category').value;
+  const month = $('txn-month').value;
+  const flagOnly = $('btn-flag-only').classList.contains('active');
+
+  let filtered = ALL_TXN.filter(r => {
+    if (search && !((r.description||'').toLowerCase().includes(search))) return false;
+    if (acct && r.source !== acct) return false;
+    if (cat && r.category !== cat) return false;
+    if (month && !(r.year_month||'').startsWith(month)) return false;
+    if (flagOnly) {
+      const isFlagged = (r.flag||'').toLowerCase() === 'true';
+      const isPending = (r.review_status||'pending') === 'pending';
+      if (!isFlagged || !isPending) return false;
+    }
+    return true;
   });
 
-  q("pt-plan").innerHTML = [
-    {trip:"Europe -- Lake Como (2 nights)",pts:"25k MR to Hilton",urgent:true},
-    {trip:"Europe -- Ortisei (2 nights)",pts:"20k MR to Marriott",urgent:true},
-    {trip:"Phoenix Sept (2 pax RT)",pts:"20k AA miles",urgent:false},
-    {trip:"Phoenix Dec (2 pax RT)",pts:"20k AA miles",urgent:false}
-  ].map(function(r){
-    return '<div class="row"><span class="rl">'+r.trip+'<br><small>'+r.pts+'</small></span>' +
-      '<span class="tag '+(r.urgent?"tag-r":"tag-n")+'">'+(r.urgent?"BOOK NOW":"Upcoming")+'</span></div>';
-  }).join("") +
-  '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total</span><span class="ra">45k MR + 40k AA</span></div>';
+  const total = filtered.length;
+  const start = txnPage * TXN_PAGE_SIZE;
+  const page = filtered.slice(start, start + TXN_PAGE_SIZE);
 
-  q("pt-post").innerHTML = [
-    {l:"MR after Europe",v:fmtPts(Math.max(0,mr-45000)),s:"+ ongoing earn"},
-    {l:"Chase UR (untouched)",v:fmtPts(urP),s:"if AA used for PHX"},
-    {l:"AA after both PHX",v:fmtPts(Math.max(0,aa-40000)),s:"good for intl biz 2027"}
-  ].map(function(m){
-    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v g">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
-  }).join("");
+  const wrap = $('txn-table-wrap');
+  if (total === 0) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">◎</div>No transactions match filters</div>';
+    $('txn-pagination').innerHTML = '';
+    return;
+  }
 
-  q("pt-strat").innerHTML = '<div class="card-title">Where to put each purchase</div>' +
-    [["All restaurants + groceries","Amex Gold -- 4x MR","Highest earn on your top 2 categories"],
-     ["Everything else","Chase CSR","Earns UR poolable with Amanda's CSP"],
-     ["Costco (no Amex)","Amanda's CSP or Freedom Flex","Only Visa accepted"],
-     ["Car rental in Europe","Chase CSR","Primary rental car insurance included"],
-     ["AA miles -- save for","International business class 2027+","Don't burn on domestic unless great deal"]
-    ].map(function(r){
-      return '<div class="row"><span class="rl">'+r[0]+'</span><span style="text-align:right;font-size:12px"><strong>'+r[1]+'</strong><br><small>'+r[2]+'</small></span></div>';
-    }).join("");
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Date</th><th>Account</th><th>Description</th><th>Category</th>
+      <th class="r">Amount</th><th>Flag</th>
+    </tr></thead>
+    <tbody>
+      ${page.map(r => {
+        const amt = parseFloat(r.amount) || 0;
+        const amtClass = amt >= 0 ? 'green' : '';
+        const catColor = categoryColor(r.category);
+        return `<tr>
+          <td class="mono">${r.date||'—'}</td>
+          <td><span class="pill pill-gray">${r.account||'—'}</span></td>
+          <td class="primary" style="max-width:280px;overflow:hidden;text-overflow:ellipsis;">${r.description||r.vendor||'—'}</td>
+          <td><span style="color:${catColor};font-family:var(--mono);font-size:11px;">${r.category||'—'}</span></td>
+          <td class="r mono ${amtClass}" style="${amt<0?'color:var(--red);':''}">${amt>=0?'+':''}${fmt(Math.abs(amt))}</td>
+          <td>${r.flag==='Y'||r.flag==='y'||r.flag==='1'||r.flag==='true'?'<span class="pill pill-amber">review</span>':''}</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+
+  const pages = Math.ceil(total / TXN_PAGE_SIZE);
+  $('txn-pagination').innerHTML = `
+    <button class="page-btn" onclick="changePage(-1)" ${txnPage===0?'disabled':''}>← prev</button>
+    <span class="page-info">page ${txnPage+1} of ${pages} · ${total} rows</span>
+    <button class="page-btn" onclick="changePage(1)" ${txnPage>=pages-1?'disabled':''}>next →</button>
+  `;
 }
 
-// ============================================================
-// TRAVEL
-// ============================================================
-function renderTravel() {
-  q("tr-metrics").innerHTML = [
-    {l:"Total cash out-of-pocket",v:"~$4,630",s:"all 5 trips",c:"r"},
-    {l:"Monthly reserve needed",v:"$385",s:"May-Dec",c:""},
-    {l:"Points covering",v:"~$2,800",s:"hotels + flights",c:"g"},
-    {l:"Year-end fund surplus",v:"~$1,295",s:"returns to HYSA",c:"g"}
-  ].map(function(m){
-    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v '+m.c+'">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
-  }).join("");
+window.changePage = function(dir) { txnPage += dir; renderTransactions(); };
 
-  var trips=[{mo:"May",l:"Shawnee camping",spend:405},{mo:"Jun",l:"Mukwonago lake house",spend:1290},
-    {mo:"Jul",l:"Building for Europe",spend:0},{mo:"Aug",l:"Europe self-funded",spend:1435},
-    {mo:"Sep",l:"Phoenix golf",spend:1100},{mo:"Oct",l:"Recovering",spend:0},
-    {mo:"Nov",l:"Building for Dec",spend:0},{mo:"Dec",l:"Phoenix wedding",spend:400}];
-  var cum=0,res=385;
-  q("tr-fund").innerHTML='<div class="card-title">Fund balance <span class="ct-sub">$385/mo reserve</span></div>' +
-    trips.map(function(t){
-      cum+=res; cum-=t.spend;
-      var neg=cum<0;
-      return '<div class="row"><span class="rl" style="min-width:36px;font-weight:500">'+t.mo+'</span>' +
-        '<span class="rl">'+t.l+(t.spend>0?' <span style="color:var(--red);font-size:11px">-'+fmt(t.spend)+'</span>':'')+'</span>' +
-        '<span class="ra '+(neg?"r":"g")+'">'+(neg?"-":"+")+fmt(Math.abs(cum))+'</span></div>';
-    }).join("");
+['txn-search','txn-account','txn-category','txn-month'].forEach(id => {
+  const el = $(id); if(el) el.addEventListener('input', () => { txnPage=0; renderTransactions(); });
+});
 
-  q("tr-trips").innerHTML=[
-    {title:"MDW -- Shawnee National Forest",date:"Memorial Day Weekend",color:"#4a9e6e",
-     rows:[["Gas","~$60"],["Campsite x3 nights","~$75"],["Food + drinks","~$120"],["Gear gaps","~$150"]],
-     total:"~$405 cash",note:"No points play"},
-    {title:"Mukwonago, WI -- Lake house",date:"Late June, 5 days",color:"#2d7a52",
-     rows:[["House share","$900"],["Groceries + meals","~$250"],["Golf round","~$60"],["Beer + misc","~$80"]],
-     total:"~$1,290 cash",note:"No useful points play"},
-    {title:"Europe -- self-funded portion",date:"Aug 3-8, 2 people",color:"#1a2f5c",
-     rows:[["Florence to Varenna train","~$80"],["Lake Como 2 nights","~25k MR to Hilton"],
-       ["Car rental (book on CSR)","~$280"],["Ortisei 2 nights","~20k MR to Marriott"],
-       ["Dolomites + Venice + food","~$590"],["Shopping budget","~$320"]],
-     total:"~$1,435 cash + 45k MR",note:"URGENT: Book Hilton Como NOW -- August sells out."},
-    {title:"Phoenix / Pinetop Golf",date:"Sept 24 - Oct 4, 11 days",color:"#6c3483",
-     rows:[["Flights ORD-PHX (2 pax RT)","~20k AA miles"],["Lodging -- FREE","$0"],
-       ["Golf: 7 rounds","~$490"],["Gas + food + misc","~$610"]],
-     total:"~$1,100 cash + 20k AA",note:"Book both PHX trips at the same time."},
-    {title:"Phoenix Wedding",date:"Dec 3-6",color:"#922b21",
-     rows:[["Flights ORD-PHX (2 pax RT)","~20k AA miles"],["Lodging -- FREE","$0"],
-       ["Wedding gift + food","~$400"]],
-     total:"~$400 cash + 20k AA",note:""}
-  ].map(function(t){
-    return '<div style="border-left:3px solid '+t.color+';padding-left:1rem;margin-bottom:1.25rem">' +
-      '<div style="font-weight:500;font-size:14px">'+t.title+'</div>' +
-      '<div style="font-family:var(--mono);font-size:10px;color:var(--ink3);margin:2px 0 .5rem;letter-spacing:.04em">'+t.date+'</div>' +
-      t.rows.map(function(r){return '<div class="row"><span class="rl">'+r[0]+'</span><span class="ra">'+r[1]+'</span></div>';}).join("") +
-      '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total</span><span class="ra">'+t.total+'</span></div>' +
-      (t.note?'<div style="font-size:11px;color:var(--ink3);margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--bg2)">'+t.note+'</div>':'')+
-      '</div>';
-  }).join("");
-}
+$('btn-flag-only').addEventListener('click', () => {
+  $('btn-flag-only').classList.add('active');
+  $('btn-all-txn').classList.remove('active');
+  txnPage = 0; renderTransactions();
+});
+$('btn-all-txn').addEventListener('click', () => {
+  $('btn-all-txn').classList.add('active');
+  $('btn-flag-only').classList.remove('active');
+  txnPage = 0; renderTransactions();
+});
 
 // ============================================================
-// TRANSACTIONS (populated from Ledger once published)
+// SPENDING TAB
 // ============================================================
-function filterTxns() {
-  // Placeholder -- will be populated from Ledger CSV once sheet is set up
-  q("txn-count").textContent = "Connect your Ledger tab to see transactions here.";
-}
+function populateSpending(txns) {
+  const excludeCats = ['Transfer', 'Income', 'Investment', 'Savings'];
+  const budgets = {
+    'Groceries & Household': 1200, 'Costco': 300, 'Restaurants & Bars': 600,
+    'Amazon': 300, 'Entertainment': 400, 'Gas': 200, 'Clothing': 400,
+    'Subscriptions': 330, 'Fixed': 2692, 'Home': 200, 'Pet': 100,
+    'Transport': 150, 'Auto': 100, 'Travel': 167, 'Medical': 100, 'Other': 200,
+  };
 
-function setTxnFilter(f, btn) {
-  TXN_FILTER = f;
-  document.querySelectorAll(".fbtn").forEach(function(b){b.classList.remove("active");});
-  btn.classList.add("active");
-  filterTxns();
-}
-
-// ============================================================
-// REVIEW TAB (populated from Ledger)
-// ============================================================
-function renderReviewStatic() {
-  q("review-body").innerHTML = '<div class="card" style="text-align:center;color:var(--ink3);padding:2rem">' +
-    '<div style="font-size:1.5rem;margin-bottom:.5rem">Connected to your sheet</div>' +
-    '<div style="font-size:13px">Once your Ledger tab is published and the GID is updated in this file,<br>' +
-    'flagged transactions will appear here automatically.<br><br>' +
-    'Resolve items directly in the Google Sheet Ledger tab<br>(change review_status to "resolved" or "archived")<br>' +
-    'then hit Refresh to update this view.</div></div>';
-}
-
-// ============================================================
-// NAV
-// ============================================================
-function nav(name) {
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-  document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("active");});
-  var pg = q("page-"+name);
-  if (pg) pg.classList.add("active");
-  document.querySelectorAll(".nb").forEach(function(b){
-    if (b.getAttribute("onclick") && b.getAttribute("onclick").indexOf("'"+name+"'")!==-1) b.classList.add("active");
+  const actual = {};
+  txns.filter(r => !excludeCats.includes(r.category) && r.type === 'expense').forEach(r => {
+    const cat = r.category || 'Other';
+    actual[cat] = (actual[cat] || 0) + Math.abs(parseFloat(r.amount) || 0);
   });
-  window.scrollTo(0,0);
+
+  const bva = $('spending-bva');
+  if (!bva) return;
+
+  const allCats = [...new Set([...Object.keys(budgets), ...Object.keys(actual)])];
+  bva.innerHTML = allCats.map(cat => {
+    const bud = budgets[cat] || 0;
+    const act = actual[cat] || 0;
+    const pct = bud > 0 ? Math.min(100, act / bud * 100) : 0;
+    const fillClass = pct > 100 ? 'fill-red' : pct > 80 ? 'fill-amber' : 'fill-green';
+    return `<div class="bva-row">
+      <div class="bva-cat" style="color:${categoryColor(cat)};">${cat}</div>
+      <div class="bva-bar-wrap">
+        <div class="bva-bar"><div class="bva-fill ${fillClass}" style="width:${pct}%;"></div></div>
+      </div>
+      <div class="bva-nums">${fmt(act)} / ${fmt(bud)}</div>
+    </div>`;
+  }).join('');
+
+  // Top vendors
+  const vendors = {};
+  txns.filter(r => !excludeCats.includes(r.category) && r.type === 'expense').forEach(r => {
+    const v = r.vendor || r.description || 'Unknown';
+    vendors[v] = (vendors[v] || 0) + Math.abs(parseFloat(r.amount) || 0);
+  });
+  const topV = Object.entries(vendors).sort((a,b) => b[1]-a[1]).slice(0,10);
+  const tv = $('top-vendors');
+  if(tv) tv.innerHTML = topV.map(([v,a]) => `
+    <div class="cf-row"><span class="cf-label" style="overflow:hidden;text-overflow:ellipsis;max-width:120px;">${v}</span><span class="cf-val">${fmt(a)}</span></div>
+  `).join('');
 }
 
 // ============================================================
-// INIT
+// CASH FLOW TAB
 // ============================================================
-renderReviewStatic();
-renderCashFlow();
-renderTravel();
-renderPoints();
-loadAll();
+function populateCashFlow(txns) {
+  const months = {};
+  txns.forEach(r => {
+    const m = (r.date||'').slice(0,7);
+    if(!m) return;
+    if(!months[m]) months[m] = { income: 0, expense: 0 };
+    const amt = parseFloat(r.amount) || 0;
+    const t = (r.type||'').toLowerCase();
+    if(t === 'transfer') return;
+    if(t === 'income') months[m].income += parseFloat(r.amount)||0;
+    else if(t === 'expense') months[m].expense += parseFloat(r.amount)||0;
+  });
+
+  const labels = Object.keys(months).sort();
+  const incomes = labels.map(m => Math.round(months[m].income));
+  const expenses = labels.map(m => Math.round(months[m].expense));
+  const surpluses = labels.map((m,i) => incomes[i] - expenses[i]);
+
+  if(labels.length > 0) {
+    const avgInc = Math.round(incomes.reduce((a,b)=>a+b,0)/incomes.length);
+    const avgExp = Math.round(expenses.reduce((a,b)=>a+b,0)/expenses.length);
+    const avgSur = avgInc - avgExp;
+    $('cf-avg-income').textContent = fmt(avgInc);
+    $('cf-avg-spend').textContent = fmt(avgExp);
+    const surEl = $('cf-avg-surplus');
+    surEl.textContent = (avgSur>=0?'+':'')+fmt(Math.abs(avgSur));
+    surEl.className = 'kpi-value ' + (avgSur>=0?'green':'red');
+
+    // Monthly table
+    const ct = $('cf-monthly-table');
+    if(ct) ct.innerHTML = `<table>
+      <thead><tr><th>Month</th><th class="r">Income</th><th class="r">Spend</th><th class="r">Surplus</th></tr></thead>
+      <tbody>
+        ${labels.map((m,i)=>`<tr>
+          <td class="mono">${m}</td>
+          <td class="r green">${fmt(incomes[i])}</td>
+          <td class="r red">${fmt(expenses[i])}</td>
+          <td class="r ${surpluses[i]>=0?'green':'red'}">${surpluses[i]>=0?'+':''}${fmt(Math.abs(surpluses[i]))}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+
+    // Chart
+    const ctx = $('cf-chart');
+    if(ctx) new Chart(ctx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Income', data: incomes, backgroundColor: 'rgba(34,197,94,0.6)', borderColor: '#22c55e', borderWidth: 1 },
+          { label: 'Spend', data: expenses, backgroundColor: 'rgba(248,113,113,0.6)', borderColor: '#f87171', borderWidth: 1 },
+          { label: 'Surplus', data: surpluses, type: 'line', borderColor: '#4f8ef7', backgroundColor: 'rgba(79,142,247,0.1)', tension: 0.3, pointRadius: 4 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#8a97b8', font: { family: "'DM Mono', monospace", size: 10 } }, grid: { color: '#253050' } },
+          y: { ticks: { color: '#8a97b8', font: { family: "'DM Mono', monospace", size: 10 }, callback: v => '$'+Math.round(v/1000)+'k' }, grid: { color: '#253050' } }
+        }
+      }
+    });
+  } else {
+    ['cf-monthly-table','cf-chart'].forEach(id => {
+      const el = $(id);
+      if(el) el.innerHTML = `<div class="empty"><div class="empty-icon">◎</div>Upload ledger CSV to see cash flow</div>`;
+    });
+    $('cf-avg-income').textContent = '$8,800*';
+    $('cf-avg-spend').textContent = '—';
+    const surEl = $('cf-avg-surplus');
+    surEl.textContent = 'Load CSV';
+    surEl.className = 'kpi-value accent';
+  }
+}
+
+// ============================================================
+// REVIEW TAB — flag unknown transactions
+// ============================================================
+function populateReview(txns) {
+  const flagged = txns.filter(r => (r.flag||'').toLowerCase()==='true' && (r.review_status||'pending')==='pending');
+  const rf = $('review-flags');
+  if(!rf) return;
+  if(flagged.length === 0) {
+    rf.innerHTML = '<div class="empty"><div class="empty-icon">✓</div>No flagged transactions</div>';
+    return;
+  }
+  rf.innerHTML = flagged.map(r => `
+    <div class="flag-row">
+      <div class="flag-icon warn">?</div>
+      <div class="flag-body">
+        <div class="flag-title">${r.date||''} · ${r.description||'Unknown'} · ${fmt(parseFloat(r.amount)||0)}</div>
+        <div class="flag-desc">${r.source||''} · ${r.who||''} · ${r.category||'uncategorized'} · ${r.flag_reason||r.review_note||'Needs review'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// MAIN INIT
+// ============================================================
+async function init() {
+  populateOverview();
+  populateInvestments();
+  populatePoints();
+
+  // Try to load live CSV data
+  const ledger = await fetchCSV(SHEETS.ledger);
+  if (ledger && ledger.length > 0) {
+    ALL_TXN = ledger;
+    renderTransactions();
+    populateSpending(ledger);
+    populateCashFlow(ledger);
+    populateReview(ledger);
+    $('last-sync').textContent = new Date().toLocaleString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+  } else {
+    $('txn-table-wrap').innerHTML = '<div class="empty"><div class="empty-icon">◎</div>Upload ledger.csv to Google Drive and add the published URL to SHEETS config</div>';
+    $('review-flags').innerHTML = '<div class="empty"><div class="empty-icon">◎</div>No data loaded yet</div>';
+    const bva = $('spending-bva'); if(bva) bva.innerHTML = '<div class="empty"><div class="empty-icon">◎</div>No data loaded</div>';
+    const tv = $('top-vendors'); if(tv) tv.innerHTML = '';
+    populateCashFlow([]);
+  }
+
+  // Update balances from live CSV if available
+  const bals = await fetchCSV(SHEETS.balances);
+  if (bals && bals.length > 0) {
+    bals.forEach(r => {
+      const id = r.account_id;
+      const el = $('bal-' + id);
+      const de = $('date-' + id);
+      if(el && r.balance) el.textContent = fmt(parseFloat(r.balance));
+      if(de && r.date) de.textContent = r.date;
+    });
+  }
+}
+
+init();
 </script>
 </body>
 </html>
