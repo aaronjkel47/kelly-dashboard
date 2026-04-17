@@ -978,8 +978,8 @@ td.mono { font-family: var(--mono); }
 // ============================================================
 const SHEETS = {
   ledger:      'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=1629091125&single=true&output=csv',
-  balances:    'YOUR_BALANCES_CSV_URL',
-  investments: 'YOUR_INVESTMENTS_CSV_URL',
+  balances:    'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=1013361380&single=true&output=csv',
+  investments: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=315072133&single=true&output=csv',
   debts:       'YOUR_DEBTS_CSV_URL',
   points:      'YOUR_POINTS_CSV_URL',
   budget:      'YOUR_BUDGET_CSV_URL',
@@ -1520,16 +1520,91 @@ async function init() {
     populateCashFlow([]);
   }
 
-  // Update balances from live CSV if available
+  // Load balances from live CSV
   const bals = await fetchCSV(SHEETS.balances);
   if (bals && bals.length > 0) {
+    // Map account names to element IDs
+    const acctMap = {
+      'Marcus HYSA Joint': '6216',
+      'Marcus Personal Amanda': '9777',
+      'Aaron Chase 6576': '6576',
+      'Aaron Chase 9057': '9057',
+      'Joint Chase 0593': '0593',
+      'Amanda Chase 3754': '3754',
+    };
     bals.forEach(r => {
-      const id = r.account_id;
+      const id = acctMap[r.account];
+      if (!id) return;
       const el = $('bal-' + id);
       const de = $('date-' + id);
-      if(el && r.balance) el.textContent = fmt(parseFloat(r.balance));
-      if(de && r.date) de.textContent = r.date;
+      const bal = cleanAmt(r.balance);
+      if(el && bal) el.textContent = fmt(bal);
+      if(de && r.year_month) de.textContent = r.year_month;
     });
+
+    // Recalculate liquid cash KPI from live balances
+    let totalLiquid = 0;
+    bals.forEach(r => { totalLiquid += cleanAmt(r.balance); });
+    if (totalLiquid > 0) {
+      $('kpi-liquid').textContent = fmt(totalLiquid);
+      $('ptax-hysa').textContent = fmt(bals.find(r=>r.account==='Marcus HYSA Joint') ? cleanAmt(bals.find(r=>r.account==='Marcus HYSA Joint').balance) : 20512);
+    }
+  }
+
+  // Load investment history from live CSV
+  const invData = await fetchCSV(SHEETS.investments);
+  if (invData && invData.length > 0) {
+    const invMap = {
+      'Aaron 401k':           {balEl:'inv-aaron401k', chgEl:'inv-aaron401k-chg', staticKey:'aaron401k'},
+      'Amanda 401k Elevation':{balEl:'inv-amanda401k1', chgEl:'inv-amanda401k1-chg', staticKey:'amanda401k1'},
+      'Amanda 401k Agital':   {balEl:'inv-amanda401k2', chgEl:'inv-amanda401k2-chg', staticKey:'amanda401k2'},
+      'Aaron Rollover IRA':   {balEl:'inv-ira', staticKey:'ira'},
+      'Joint Brokerage':      {balEl:'inv-brok', staticKey:'brokerage'},
+      'Aaron HSA':            {balEl:'inv-hsa2', staticKey:'hsa'},
+      'Aaron IUL':            {balEl:'inv-iul2', staticKey:'iul_gross'},
+    };
+    let totalRetirement = 0, totalBrokerage = 0, totalHSA = 0, totalIUL = 0;
+    invData.forEach(r => {
+      const mapping = invMap[r.account];
+      if (!mapping) return;
+      const bal = cleanAmt(r.ending_balance);
+      const el = $(mapping.balEl);
+      if (el && bal) el.textContent = fmt(bal);
+      if (mapping.chgEl && r.return_pct) {
+        const chgEl = $(mapping.chgEl);
+        if (chgEl) {
+          const pct = parseFloat(r.return_pct)||0;
+          chgEl.textContent = (pct>=0?'+':'')+pct.toFixed(1)+'% period';
+          chgEl.className = 'inv-change ' + (pct>=0?'green':'red');
+        }
+      }
+      // Accumulate totals
+      const key = mapping.staticKey;
+      if (['aaron401k','amanda401k1','amanda401k2','ira'].includes(key)) totalRetirement += bal;
+      if (key === 'brokerage') totalBrokerage = bal;
+      if (key === 'hsa') totalHSA = bal;
+      if (key === 'iul_gross') totalIUL = bal;
+    });
+    // Update KPI cards on investments tab
+    if (totalRetirement > 0) $('inv-retirement').textContent = fmt(totalRetirement);
+    if (totalBrokerage > 0) { $('inv-brokerage').textContent = fmt(totalBrokerage); $('inv-brok').textContent = fmt(totalBrokerage); }
+    if (totalHSA > 0) { $('inv-hsa').textContent = fmt(totalHSA); $('inv-hsa2').textContent = fmt(totalHSA); }
+    if (totalIUL > 0) { $('inv-iul').textContent = fmt(totalIUL); $('inv-iul2').textContent = fmt(totalIUL); }
+
+    // Update FIL progress from live brokerage balance
+    if (totalBrokerage > 0) {
+      const filPct = (totalBrokerage / 485000 * 100).toFixed(1);
+      const filMonths = Math.ceil((485000 - totalBrokerage) / 2500);
+      const filETA = new Date(); filETA.setMonth(filETA.getMonth() + filMonths);
+      const etaStr = filETA.toLocaleDateString('en-US', {month:'short', year:'numeric'});
+      ['fil-progress','fil-prog2'].forEach(id => { const el=$(id); if(el) el.textContent = fmt(totalBrokerage) + ' invested'; });
+      ['fil-bar','fil-bar2'].forEach(id => { const el=$(id); if(el) el.style.width = Math.min(100,filPct)+'%'; });
+      ['fil-eta','fil-eta2'].forEach(id => { const el=$(id); if(el) el.textContent = '~'+filMonths+' months remaining · est. '+etaStr; });
+    }
+
+    // Recalculate net worth with live data
+    const totalInv = totalRetirement + totalBrokerage + totalHSA + totalIUL;
+    if (totalInv > 0) $('kpi-investments').textContent = fmt(totalInv);
   }
 }
 
