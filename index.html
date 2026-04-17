@@ -1051,6 +1051,9 @@ function parseCSV(text) {
     vals.push(cur.trim());
     const obj = {};
     headers.forEach((h, i) => { obj[h] = (vals[i] || '').replace(/^"|"$/g, '').trim(); });
+    // Clean numeric fields that Google Sheets may format as currency
+    if (obj.amount) obj.amount = obj.amount.toString().replace(/[$,]/g, '');
+    if (obj.net_amount) obj.net_amount = obj.net_amount.toString().replace(/[$,]/g, '');
     return obj;
   });
 }
@@ -1494,6 +1497,10 @@ async function init() {
   const ledger = await fetchCSV(SHEETS.ledger);
   if (ledger && ledger.length > 0) {
     ALL_TXN = ledger;
+    if (ledger.length > 0) {
+      console.log('Ledger loaded. First row keys:', Object.keys(ledger[0]));
+      console.log('First row amount:', ledger[0].amount, '| type:', ledger[0].type);
+    }
     renderTransactions();
     populateSpending(ledger);
     populateCashFlow(ledger);
