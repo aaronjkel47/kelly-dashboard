@@ -3,1234 +3,943 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kelly -- Financial Dashboard</title>
+<title>Kelly Household</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --ink: #0f0f0f;
-  --ink2: #3a3a3a;
-  --ink3: #7a7a7a;
-  --paper: #f8f5f0;
-  --paper2: #eeebe4;
-  --paper3: #e3dfd7;
-  --accent: #1a4731;
-  --accent2: #2d7a52;
-  --accent-light: #e8f2ec;
-  --red: #7a1f1f;
-  --red-light: #f5eaea;
-  --amber: #6b4a00;
-  --amber-light: #fdf5e0;
-  --blue: #1a2f5c;
-  --blue-light: #e8edf8;
-  --serif: 'Instrument Serif', Georgia, serif;
-  --sans: 'Instrument Sans', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', monospace;
-  --r: 6px;
-  --r2: 12px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --bg:      #f7f4ef;
+  --bg2:     #edeae3;
+  --bg3:     #e2ddd6;
+  --ink:     #111;
+  --ink2:    #444;
+  --ink3:    #888;
+  --green:   #1a4731;
+  --green2:  #2d7a52;
+  --greenl:  #e8f3ed;
+  --red:     #7a1f1f;
+  --redl:    #f7eded;
+  --amber:   #6b4800;
+  --amberl:  #fdf4e0;
+  --blue:    #1a2f5c;
+  --bluel:   #e6edf8;
+  --purple:  #3d2a6b;
+  --purpl:   #eeebf7;
+  --serif:   'DM Serif Display', serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
+  --mono:    'DM Mono', monospace;
+  --r:       8px;
+  --sh:      0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.6; min-height: 100vh; }
 
-body {
-  font-family: var(--sans);
-  background: var(--paper);
-  color: var(--ink);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.6;
+/* TOPBAR */
+.topbar {
+  background: var(--ink); color: #f7f4ef;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 56px; position: sticky; top: 0; z-index: 200;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
+.topbar-brand { font-family: var(--serif); font-size: 1.15rem; }
+.topbar-sub { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: .1em; text-transform: uppercase; margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 1rem; }
+.topbar-status { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.4); }
+.topbar-status span { color: #6eb88a; }
+nav { display: flex; }
+.nb {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  color: rgba(255,255,255,0.4); font-family: var(--mono); font-size: 10px;
+  letter-spacing: .07em; text-transform: uppercase; padding: 0 1rem; height: 56px;
+  cursor: pointer; transition: color .15s, border-color .15s; white-space: nowrap;
+}
+.nb:hover { color: rgba(255,255,255,0.8); }
+.nb.active { color: #f7f4ef; border-bottom-color: #6eb88a; }
+.rfr-btn {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6); font-family: var(--mono); font-size: 10px;
+  padding: 6px 13px; border-radius: var(--r); cursor: pointer; transition: all .15s;
+}
+.rfr-btn:hover { background: rgba(255,255,255,0.14); color: #f7f4ef; }
 
-/* NAV */
-.top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--ink);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 52px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.top-bar-title {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  color: var(--paper);
-  letter-spacing: -0.01em;
-}
-.top-bar-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: rgba(248,245,240,0.4);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-nav {
-  display: flex;
-  gap: 0;
-  align-items: center;
-}
-.nav-btn {
-  background: none;
-  border: none;
-  color: rgba(248,245,240,0.45);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0 1rem;
-  height: 52px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color .15s, border-color .15s;
-  white-space: nowrap;
-}
-.nav-btn:hover { color: var(--paper); }
-.nav-btn.active { color: var(--paper); border-bottom-color: #6eb88a; }
+/* LAYOUT */
+.page { display: none; padding: 1.75rem; max-width: 1140px; margin: 0 auto; }
+.page.active { display: block; animation: fi .25s ease; }
+@keyframes fi { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
 
-.refresh-btn {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(248,245,240,0.6);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  padding: 5px 12px;
-  border-radius: var(--r);
-  cursor: pointer;
-  transition: all .15s;
-}
-.refresh-btn:hover { background: rgba(255,255,255,0.12); color: var(--paper); }
+/* SECTION LABEL */
+.sl { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin: 1.75rem 0 .65rem; }
+.sl:first-child { margin-top: 0; }
 
-/* PAGES */
-.page { display: none; padding: 2rem; max-width: 1140px; margin: 0 auto; }
-.page.active { display: block; }
+/* METRIC STRIP */
+.mstrip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 1px; background: var(--bg3); border: 1px solid var(--bg3); border-radius: var(--r); overflow: hidden; margin-bottom: 1.25rem; }
+.mc { background: var(--bg); padding: 1rem 1.1rem; transition: background .12s; }
+.mc:hover { background: var(--bg2); }
+.mc-l { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); margin-bottom: .25rem; }
+.mc-v { font-family: var(--serif); font-size: 1.75rem; letter-spacing: -.02em; line-height: 1.1; }
+.mc-v.g { color: var(--green); }
+.mc-v.r { color: var(--red); }
+.mc-v.a { color: var(--amber); }
+.mc-v.b { color: var(--blue); }
+.mc-s { font-size: 11px; color: var(--ink3); margin-top: 2px; }
 
-/* LOADING */
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  gap: 1rem;
-  color: var(--ink3);
-}
-.spinner {
-  width: 28px; height: 28px;
-  border: 2px solid var(--paper3);
-  border-top-color: var(--accent2);
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* SECTION LABELS */
-.section-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin: 2rem 0 .75rem;
-}
-.section-label:first-child { margin-top: 0; }
-
-/* METRIC GRID */
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1px;
-  background: var(--paper3);
-  border: 1px solid var(--paper3);
-  border-radius: var(--r2);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-.metric {
-  background: var(--paper);
-  padding: 1.1rem 1.25rem;
-  transition: background .15s;
-}
-.metric:hover { background: var(--paper2); }
-.metric-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-bottom: .35rem;
-}
-.metric-value {
-  font-family: var(--serif);
-  font-size: 1.8rem;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  color: var(--ink);
-}
-.metric-value.green { color: var(--accent); }
-.metric-value.red { color: var(--red); }
-.metric-value.amber { color: var(--amber); }
-.metric-sub {
-  font-size: 11px;
-  color: var(--ink3);
-  margin-top: 3px;
-}
-
-/* CARDS */
-.card {
-  background: var(--paper);
-  border: 1px solid var(--paper3);
-  border-radius: var(--r2);
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  box-shadow: var(--shadow);
-}
-.card-title {
-  font-family: var(--serif);
-  font-size: 1rem;
-  margin-bottom: .75rem;
-  color: var(--ink);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: .5rem;
-}
-.card-title-mono {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink3);
-}
+/* CARD */
+.card { background: var(--bg); border: 1px solid var(--bg3); border-radius: var(--r); padding: 1.2rem; margin-bottom: 1rem; box-shadow: var(--sh); }
+.card-title { font-family: var(--serif); font-size: 1rem; margin-bottom: .7rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
+.ct-sub { font-family: var(--mono); font-size: 10px; color: var(--ink3); }
 
 /* ROWS */
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--paper2);
-  gap: 1rem;
-  font-size: 13px;
-}
+.row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--bg2); gap: 1rem; font-size: 13px; }
 .row:last-child { border-bottom: none; }
-.row-label { color: var(--ink2); flex: 1; }
-.row-note { font-size: 11px; color: var(--ink3); text-align: right; }
-.row-amt {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-.row-amt.green { color: var(--accent); }
-.row-amt.red { color: var(--red); }
-.row-amt.amber { color: var(--amber); }
-
-/* CHART WRAPPERS */
-.chart-wrap { position: relative; width: 100%; }
-.chart-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-.chart-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-@media (max-width: 700px) {
-  .chart-2col, .chart-3col { grid-template-columns: 1fr; }
-  nav { display: none; }
-}
+.rl { color: var(--ink2); flex: 1; min-width: 0; }
+.rl small { font-size: 11px; color: var(--ink3); display: block; }
+.ra { font-family: var(--mono); font-size: 12px; font-weight: 500; white-space: nowrap; }
+.ra.g { color: var(--green); }
+.ra.r { color: var(--red); }
+.ra.a { color: var(--amber); }
+.ra.b { color: var(--blue); }
 
 /* TAGS */
-.tag {
-  display: inline-block;
-  font-size: 10px;
-  font-family: var(--mono);
-  padding: 2px 7px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-.tag-green { background: var(--accent-light); color: var(--accent); }
-.tag-red { background: var(--red-light); color: var(--red); }
-.tag-amber { background: var(--amber-light); color: var(--amber); }
-.tag-blue { background: var(--blue-light); color: var(--blue); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 99px; white-space: nowrap; vertical-align: middle; }
+.tag-g { background: var(--greenl); color: var(--green); }
+.tag-r { background: var(--redl); color: var(--red); }
+.tag-a { background: var(--amberl); color: var(--amber); }
+.tag-b { background: var(--bluel); color: var(--blue); }
+.tag-p { background: var(--purpl); color: var(--purple); }
+.tag-n { background: var(--bg2); color: var(--ink3); }
 
 /* PROGRESS BAR */
-.prog-row {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--paper2);
-  font-size: 13px;
-}
-.prog-row:last-child { border-bottom: none; }
-.prog-label { flex: 1; color: var(--ink2); min-width: 120px; }
-.prog-track {
-  flex: 2;
-  height: 5px;
-  background: var(--paper3);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.prog-fill { height: 5px; border-radius: 3px; transition: width .6s ease; }
-.prog-amt {
-  font-family: var(--mono);
-  font-size: 12px;
-  min-width: 80px;
-  text-align: right;
-  white-space: nowrap;
-}
+.prow { display: flex; align-items: center; gap: .75rem; padding: 7px 0; border-bottom: 1px solid var(--bg2); font-size: 13px; }
+.prow:last-child { border-bottom: none; }
+.pl { flex: 1; color: var(--ink2); }
+.pt { flex: 2; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; min-width: 60px; }
+.pf { height: 5px; border-radius: 3px; transition: width .5s; }
+.pa { font-family: var(--mono); font-size: 11px; min-width: 72px; text-align: right; white-space: nowrap; }
+
+/* TRANSACTION TABLE */
+.txn-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.txn-table th { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--bg3); white-space: nowrap; }
+.txn-table th.r { text-align: right; }
+.txn-table td { padding: 7px 8px; border-bottom: 1px solid var(--bg2); vertical-align: middle; }
+.txn-table td.mono { font-family: var(--mono); font-size: 12px; }
+.txn-table td.r { text-align: right; }
+.txn-table tr:last-child td { border-bottom: none; }
+.txn-table tr.flagged { background: #fff8e6; }
+.txn-table tr.income { background: #f0f7ed; }
+.txn-table tr.resolved { opacity: .5; }
+
+/* FILTER BAR */
+.fbar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+.fbtn { background: var(--bg2); border: 1px solid var(--bg3); border-radius: 99px; font-family: var(--mono); font-size: 10px; padding: 5px 12px; cursor: pointer; transition: all .12s; color: var(--ink2); white-space: nowrap; }
+.fbtn:hover { background: var(--bg3); }
+.fbtn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.fsearch { flex: 1; min-width: 160px; padding: 6px 10px; border: 1px solid var(--bg3); border-radius: var(--r); font-family: var(--sans); font-size: 13px; background: var(--bg); color: var(--ink); outline: none; }
+.fsearch:focus { border-color: var(--green2); }
+
+/* 2-COL */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 700px) { .g2, .g3 { grid-template-columns: 1fr; } nav { display: none; } }
+
+/* CHART */
+.cw { position: relative; }
 
 /* LEGEND */
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-size: 11px;
-  color: var(--ink3);
-  margin-top: .5rem;
-}
-.legend-item { display: flex; align-items: center; gap: 4px; }
-.legend-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.leg { display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px; color: var(--ink3); margin-top: .5rem; }
+.leg-i { display: flex; align-items: center; gap: 4px; }
+.leg-d { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
 
-/* TRIPS */
-.trip-card {
-  border-left: 3px solid var(--accent2);
-  padding-left: 1rem;
-  margin-bottom: 1.25rem;
-}
-.trip-title { font-weight: 500; font-size: 14px; }
-.trip-date { font-family: var(--mono); font-size: 10px; color: var(--ink3); margin: 2px 0 .5rem; letter-spacing: .04em; }
+/* LOADING */
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; gap: 1rem; color: var(--ink3); }
+.spin { width: 24px; height: 24px; border: 2px solid var(--bg3); border-top-color: var(--green2); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.errbx { background: var(--redl); border: 1px solid #d4a0a0; border-radius: var(--r); padding: 1.2rem; color: var(--red); font-size: 13px; line-height: 1.6; }
 
 /* POINTS */
-.pts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1px;
-  background: var(--paper3);
-  border: 1px solid var(--paper3);
-  border-radius: var(--r2);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-.pts-cell { background: var(--paper); padding: 1rem 1.25rem; }
-.pts-name { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: .25rem; }
-.pts-val { font-family: var(--serif); font-size: 1.5rem; letter-spacing: -0.01em; }
-.pts-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1px; background: var(--bg3); border: 1px solid var(--bg3); border-radius: var(--r); overflow: hidden; margin-bottom: 1.25rem; }
+.pcell { background: var(--bg); padding: 1rem 1.1rem; }
+.pn { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); margin-bottom: .25rem; }
+.pv { font-family: var(--serif); font-size: 1.5rem; letter-spacing: -.01em; }
+.ps { font-size: 11px; color: var(--ink3); margin-top: 2px; }
 
-/* ANIMATIONS */
-.fade-in { animation: fadeIn .4s ease both; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.stagger > * { animation: fadeIn .4s ease both; }
-.stagger > *:nth-child(1) { animation-delay: .05s; }
-.stagger > *:nth-child(2) { animation-delay: .1s; }
-.stagger > *:nth-child(3) { animation-delay: .15s; }
-.stagger > *:nth-child(4) { animation-delay: .2s; }
-.stagger > *:nth-child(5) { animation-delay: .25s; }
+/* INVEST */
+.inv-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.inv-fill { height: 6px; border-radius: 3px; }
 
-/* ERROR */
-.error-box {
-  background: var(--red-light);
-  border: 1px solid #d4a0a0;
-  border-radius: var(--r2);
-  padding: 1.25rem;
-  color: var(--red);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* HIGHLIGHT CARD */
-.highlight-card {
-  border: 2px solid var(--accent2);
-  border-radius: var(--r2);
-  padding: 1.25rem;
-  background: var(--accent-light);
-  margin-bottom: 1rem;
-}
+/* BADGE */
+.badge { display: inline-flex; align-items: center; justify-content: center; background: var(--red); color: white; font-family: var(--mono); font-size: 9px; font-weight: 600; border-radius: 99px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
 </style>
 </head>
 <body>
 
-<div class="top-bar">
+<div class="topbar">
   <div>
-    <div class="top-bar-title">Kelly Household</div>
-    <div class="top-bar-sub">2026 Financial Dashboard</div>
+    <div class="topbar-brand">Kelly Household</div>
+    <div class="topbar-sub">2026 Financial Dashboard</div>
   </div>
-  <nav id="main-nav">
-    <button class="nav-btn active" onclick="showPage('overview')">Overview</button>
-    <button class="nav-btn" onclick="showPage('spending')">Spending</button>
-    <button class="nav-btn" onclick="showPage('cashflow')">Cash Flow</button>
-    <button class="nav-btn" onclick="showPage('travel')">Travel</button>
-    <button class="nav-btn" onclick="showPage('points')">Points</button>
-    <button class="nav-btn" onclick="showPage('networth')">Net Worth</button>
+  <nav>
+    <button class="nb active" onclick="nav('overview')">Overview</button>
+    <button class="nb" onclick="nav('transactions')">Transactions</button>
+    <button class="nb" onclick="nav('review')">Review <span class="badge" id="review-badge" style="display:none">0</span></button>
+    <button class="nb" onclick="nav('spending')">Spending</button>
+    <button class="nb" onclick="nav('cashflow')">Cash Flow</button>
+    <button class="nb" onclick="nav('invest')">Investments</button>
+    <button class="nb" onclick="nav('points')">Points</button>
+    <button class="nb" onclick="nav('travel')">Travel</button>
   </nav>
-  <button class="refresh-btn" onclick="loadAll()">Refresh</button>
+  <div class="topbar-right">
+    <div class="topbar-status">Last sync: <span id="sync-time">--</span></div>
+    <button class="rfr-btn" onclick="loadAll()">Refresh</button>
+  </div>
 </div>
 
 <!-- OVERVIEW -->
 <div class="page active" id="page-overview">
-  <div class="loading" id="loading-overview">
-    <div class="spinner"></div>
-    <span>Loading your data...</span>
-  </div>
-  <div id="content-overview" style="display:none;">
-    <div class="section-label">Household snapshot</div>
-    <div class="metric-grid stagger" id="overview-metrics"></div>
-
-    <div class="chart-2col stagger">
+  <div class="loading" id="ov-loading"><div class="spin"></div><span>Loading your data...</span></div>
+  <div id="ov-body" style="display:none">
+    <div class="sl" id="ov-sl">Household snapshot</div>
+    <div class="mstrip" id="ov-metrics"></div>
+    <div class="g2">
       <div class="card">
-        <div class="card-title">Spending this month <span class="card-title-mono" id="current-month-label"></span></div>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="donut-chart" role="img" aria-label="Spending by category donut chart"></canvas>
-        </div>
-        <div class="legend" id="donut-legend"></div>
+        <div class="card-title">Spending this month <span class="ct-sub" id="ov-mo"></span></div>
+        <div class="cw" style="height:200px"><canvas id="ch-donut"></canvas></div>
+        <div class="leg" id="donut-leg"></div>
       </div>
       <div class="card">
-        <div class="card-title">Month over month trend</div>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="trend-chart" role="img" aria-label="Monthly spending trend line chart"></canvas>
-        </div>
+        <div class="card-title">Monthly total trend</div>
+        <div class="cw" style="height:200px"><canvas id="ch-trend"></canvas></div>
       </div>
     </div>
-
-    <div class="section-label">Variable income -- 2026</div>
-    <div class="card" id="windfall-card"></div>
+    <div class="sl">Variable income -- remaining 2026</div>
+    <div class="card" id="ov-windfalls"></div>
+    <div class="sl">Brokerage obligation progress</div>
+    <div class="card" id="ov-brokprog"></div>
   </div>
+</div>
+
+<!-- TRANSACTIONS -->
+<div class="page" id="page-transactions">
+  <div class="sl">All transactions</div>
+  <div class="fbar">
+    <input class="fsearch" id="txn-search" placeholder="Search merchant, category..." oninput="filterTxns()">
+    <button class="fbtn active" onclick="setTxnFilter('all',this)">All</button>
+    <button class="fbtn" onclick="setTxnFilter('expense',this)">Expenses</button>
+    <button class="fbtn" onclick="setTxnFilter('income',this)">Income</button>
+    <button class="fbtn" onclick="setTxnFilter('flagged',this)">Flagged</button>
+    <select class="fbtn" id="txn-mo-filter" onchange="filterTxns()" style="padding:5px 10px">
+      <option value="">All months</option>
+    </select>
+    <select class="fbtn" id="txn-who-filter" onchange="filterTxns()" style="padding:5px 10px">
+      <option value="">All people</option>
+      <option value="Aaron">Aaron</option>
+      <option value="Amanda">Amanda</option>
+      <option value="Joint">Joint</option>
+    </select>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="txn-table" id="txn-table">
+        <thead>
+          <tr>
+            <th>Date</th><th>Merchant</th><th>Category</th>
+            <th>Source</th><th>Who</th><th class="r">Amount</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="txn-body"></tbody>
+      </table>
+    </div>
+    <div style="padding:.75rem 1rem;border-top:1px solid var(--bg2);font-family:var(--mono);font-size:10px;color:var(--ink3)" id="txn-count"></div>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div class="page" id="page-review">
+  <div class="sl">Needs review -- flagged transactions</div>
+  <div class="card" style="background:var(--amberl);border-color:#d4b870;margin-bottom:1rem">
+    <div style="font-size:13px;color:var(--amber);line-height:1.6">
+      These transactions were flagged because they are large, unusual, from P2P merchants, or from unknown vendors.
+      Add a note, adjust the net amount if something was reimbursed or split, then mark as Resolved directly in the Google Sheet Ledger tab (change review_status to "resolved").
+      Resolved items will disappear from this list on next refresh.
+    </div>
+  </div>
+  <div id="review-body"></div>
 </div>
 
 <!-- SPENDING -->
 <div class="page" id="page-spending">
-  <div class="loading" id="loading-spending">
-    <div class="spinner"></div><span>Loading...</span>
-  </div>
-  <div id="content-spending" style="display:none;">
-    <div class="section-label">Monthly spending vs. targets</div>
-    <div class="card" id="spending-bars"></div>
-
-    <div class="section-label">Category breakdown -- all months</div>
-    <div class="chart-wrap card" style="height:320px;">
-      <canvas id="stacked-bar" role="img" aria-label="Stacked bar chart of spending by category per month"></canvas>
+  <div class="loading" id="sp-loading"><div class="spin"></div><span>Loading...</span></div>
+  <div id="sp-body" style="display:none">
+    <div class="sl">Budget vs. actuals -- monthly average</div>
+    <div class="card" id="sp-bars"></div>
+    <div class="sl">Monthly breakdown by category</div>
+    <div class="card" style="padding:1.2rem">
+      <div class="cw" style="height:280px"><canvas id="ch-stack"></canvas></div>
+      <div class="leg" id="stack-leg" style="margin-top:.75rem"></div>
     </div>
-    <div class="legend" id="stacked-legend" style="padding: 0 0 1rem;"></div>
-
-    <div class="section-label">Opportunities to cut</div>
-    <div class="card" id="cut-card"></div>
+    <div class="sl">Category totals -- year to date</div>
+    <div class="card" id="sp-ytd"></div>
   </div>
 </div>
 
 <!-- CASH FLOW -->
 <div class="page" id="page-cashflow">
-  <div class="loading" id="loading-cashflow">
-    <div class="spinner"></div><span>Loading...</span>
+  <div class="sl">Apr through Dec 2026</div>
+  <div class="mstrip" id="cf-metrics"></div>
+  <div class="card" style="padding:1.2rem">
+    <div class="cw" style="height:240px"><canvas id="ch-cf"></canvas></div>
   </div>
-  <div id="content-cashflow" style="display:none;">
-    <div class="section-label">Monthly cash flow -- Apr through Dec 2026</div>
-    <div class="metric-grid stagger" id="cf-metrics"></div>
-    <div class="chart-wrap card" style="height:280px; padding: 1.25rem;">
-      <canvas id="cf-bar" role="img" aria-label="Monthly income bar chart with bonus and commission callouts"></canvas>
-    </div>
-    <div class="section-label">Fixed obligations</div>
-    <div class="card" id="fixed-card"></div>
-    <div class="section-label">Property tax plan</div>
-    <div class="card" id="tax-card"></div>
-  </div>
+  <div class="sl">Fixed obligations</div>
+  <div class="card" id="cf-fixed"></div>
+  <div class="sl">Property tax</div>
+  <div class="card" id="cf-tax"></div>
 </div>
 
-<!-- TRAVEL -->
-<div class="page" id="page-travel">
-  <div id="content-travel">
-    <div class="section-label">2026 travel summary</div>
-    <div class="metric-grid stagger" id="travel-metrics"></div>
-    <div class="section-label">Travel fund tracker</div>
-    <div class="card" id="travel-fund"></div>
-    <div class="section-label">Trip breakdown</div>
-    <div id="trip-cards"></div>
+<!-- INVESTMENTS -->
+<div class="page" id="page-invest">
+  <div class="loading" id="inv-loading"><div class="spin"></div><span>Loading...</span></div>
+  <div id="inv-body" style="display:none">
+    <div class="sl">Account balances -- current</div>
+    <div class="mstrip" id="inv-metrics"></div>
+    <div class="sl">Performance over time</div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Combined wealth trend</div>
+        <div class="cw" style="height:200px"><canvas id="ch-wealth"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Asset allocation</div>
+        <div class="cw" style="height:200px"><canvas id="ch-alloc"></canvas></div>
+        <div class="leg" id="alloc-leg"></div>
+      </div>
+    </div>
+    <div class="sl">Account detail</div>
+    <div id="inv-accounts"></div>
+    <div class="sl">Brokerage obligation detail</div>
+    <div class="card" id="inv-brok"></div>
   </div>
 </div>
 
 <!-- POINTS -->
 <div class="page" id="page-points">
-  <div class="loading" id="loading-points">
-    <div class="spinner"></div><span>Loading...</span>
-  </div>
-  <div id="content-points" style="display:none;">
-    <div class="section-label">Current balances</div>
-    <div class="pts-grid stagger" id="pts-grid"></div>
-    <div class="chart-2col stagger">
-      <div class="card">
-        <div class="card-title">Portfolio value</div>
-        <div class="chart-wrap" style="height:200px;">
-          <canvas id="pts-bar" role="img" aria-label="Points value bar chart"></canvas>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">2026 redemption plan</div>
-        <div id="redemption-rows"></div>
-      </div>
+  <div class="sl">Current balances</div>
+  <div class="pgrid" id="pt-grid"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Portfolio value</div>
+      <div class="cw" style="height:180px"><canvas id="ch-pts"></canvas></div>
     </div>
-    <div class="section-label">Post-travel projected balances</div>
-    <div class="metric-grid stagger" id="pts-post"></div>
-    <div class="section-label">Card strategy</div>
-    <div class="card" id="card-strategy"></div>
+    <div class="card">
+      <div class="card-title">2026 redemption plan</div>
+      <div id="pt-plan"></div>
+    </div>
   </div>
+  <div class="sl">Post-travel projected balances</div>
+  <div class="mstrip" id="pt-post"></div>
+  <div class="sl">Card strategy</div>
+  <div class="card" id="pt-strat"></div>
 </div>
 
-<!-- NET WORTH -->
-<div class="page" id="page-networth">
-  <div class="loading" id="loading-networth">
-    <div class="spinner"></div><span>Loading...</span>
-  </div>
-  <div id="content-networth" style="display:none;">
-    <div class="section-label">Net worth snapshot</div>
-    <div class="metric-grid stagger" id="nw-metrics"></div>
-    <div class="chart-2col stagger">
-      <div class="card">
-        <div class="card-title">Assets</div>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="asset-donut" role="img" aria-label="Asset allocation donut chart"></canvas>
-        </div>
-        <div class="legend" id="asset-legend"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Liabilities & obligations</div>
-        <div id="liabilities-rows"></div>
-        <div style="margin-top:1rem;" id="brokerage-progress"></div>
-      </div>
-    </div>
-  </div>
+<!-- TRAVEL -->
+<div class="page" id="page-travel">
+  <div class="sl">2026 travel summary</div>
+  <div class="mstrip" id="tr-metrics"></div>
+  <div class="sl">Travel fund tracker</div>
+  <div class="card" id="tr-fund"></div>
+  <div class="sl">Trip breakdown</div>
+  <div id="tr-trips"></div>
 </div>
 
 <script>
 // ============================================================
-// CONFIG -- Sheet ID and published tab URLs
+// SHEET PUBLISHED CSV URLS
 // ============================================================
-var SHEET_ID = "1LjYlnr7gVOYt3BzEoAn5piWMh7S9w9PLWAfdDyMBF1c";
-
-// Published tab URLs (from File -> Share -> Publish to web)
-var URLS = {
-  summary:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=1413928240&single=true&output=csv",
-  balances: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=730337422&single=true&output=csv",
-  review:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=1750449341&single=true&output=csv"
+var SHEET_URLS = {
+  ledger:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=LEDGER_GID&single=true&output=csv",
+  balances:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=BALANCES_GID&single=true&output=csv",
+  invest:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=INVEST_GID&single=true&output=csv"
 };
-
-// ============================================================
-// TARGETS & STATIC DATA
-// ============================================================
-var TARGETS = {
-  "Groceries & Household": 550,
-  "Costco":                350,
-  "Restaurants & Bars":    300,
-  "Amazon":                200,
-  "Clothing":              150,
-  "Entertainment":         250,
-  "Gas":                   170,
-  "Subscriptions":         170,
-  "Fixed":                 495,
-  "Home":                  100,
-  "Pet":                   80,
-  "Transport":             60,
-  "Auto":                  0,
-  "Travel":                385,
-  "Other":                 100
-};
-
-var CAT_COLORS = {
-  "Groceries & Household": "#2d7a52",
-  "Costco":                "#4a9e6e",
-  "Restaurants & Bars":    "#c0392b",
-  "Amazon":                "#d35400",
-  "Clothing":              "#8e44ad",
-  "Entertainment":         "#2980b9",
-  "Gas":                   "#7f8c8d",
-  "Subscriptions":         "#e67e22",
-  "Fixed":                 "#1a4731",
-  "Home":                  "#27ae60",
-  "Pet":                   "#16a085",
-  "Transport":             "#922b21",
-  "Auto":                  "#6c3483",
-  "Travel":                "#1a2f5c",
-  "Other":                 "#616a6b"
-};
+// NOTE: Replace LEDGER_GID, BALANCES_GID, INVEST_GID with actual
+// gid values from your sheet URL after running setupSheets().
 
 var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-// Income/cash flow data (from budget context)
-var BASE_INCOME = 8800;
-var FIXED_OBLIGATIONS = 5938;
-var CF_MONTHS = [
-  {mo:"Apr", bonus:0,     fil:0,     travel:0,    tax:0},
-  {mo:"May", bonus:0,     fil:0,     travel:405,  tax:0},
-  {mo:"Jun", bonus:2150,  fil:25000, travel:1290, tax:6300},
-  {mo:"Jul", bonus:2500,  fil:0,     travel:0,    tax:0},
-  {mo:"Aug", bonus:0,     fil:0,     travel:1435, tax:0},
-  {mo:"Sep", bonus:2150,  fil:0,     travel:1100, tax:5700},
-  {mo:"Oct", bonus:0,     fil:0,     travel:0,    tax:0},
-  {mo:"Nov", bonus:0,     fil:0,     travel:0,    tax:0},
-  {mo:"Dec", bonus:4650,  fil:0,     travel:400,  tax:0}
-];
+var CAT_COLORS = {
+  "Groceries & Household":"#2d7a52","Costco":"#4a9e6e",
+  "Restaurants & Bars":"#c0392b","Amazon":"#d35400",
+  "Clothing":"#8e44ad","Entertainment":"#2980b9",
+  "Gas":"#7f8c8d","Subscriptions":"#e67e22",
+  "Fixed":"#1a4731","Home":"#27ae60",
+  "Pet":"#16a085","Transport":"#922b21",
+  "Auto":"#6c3483","Travel":"#1a2f5c",
+  "Medical":"#e74c3c","Other":"#95a5a6",
+  "Income -- Paycheck":"#1a4731","Income -- Bonus":"#2d7a52",
+  "Income -- Reimbursement":"#4a9e6e",
+  "Loan Payment":"#7f8c8d","Tax":"#c0392b","Savings":"#2980b9"
+};
+
+var TARGETS = {
+  "Groceries & Household":550,"Costco":350,"Restaurants & Bars":300,
+  "Amazon":200,"Clothing":150,"Entertainment":250,"Gas":170,
+  "Subscriptions":170,"Fixed":495,"Home":100,"Pet":80,
+  "Transport":60,"Auto":0,"Travel":385,"Other":100
+};
+
+var DATA = { ledger:[], balances:[], invest:[] };
+var CHARTS = {};
+var TXN_FILTER = "all";
+var ALL_TXNS = [];
 
 // ============================================================
 // HELPERS
 // ============================================================
-function $(id) { return document.getElementById(id); }
-function fmt(n) { return "$" + Math.round(n).toLocaleString(); }
+function q(id) { return document.getElementById(id); }
+function fmt(n) { return "$" + Math.round(Math.abs(n)).toLocaleString(); }
+function fmtD(n) { return "$" + Math.abs(n).toFixed(2); }
 function fmtPts(n) { return Math.round(n).toLocaleString(); }
-function fmtDec(n) { return "$" + n.toFixed(2); }
+function dc(id) { if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; } }
 
-function parseCSV(text) {
-  var lines = text.trim().split("\n");
-  var headers = lines[0].split(",").map(function(h) { return h.replace(/"/g,"").trim(); });
+function parseCSV(txt) {
+  var lines = txt.trim().split("\n");
+  if (!lines.length) return [];
+  var header = splitLine(lines[0]);
   var rows = [];
   for (var i = 1; i < lines.length; i++) {
-    var vals = lines[i].match(/(".*?"|[^,]+|(?<=,)(?=,)|^(?=,)|(?<=,)$)/g) || lines[i].split(",");
+    if (!lines[i].trim()) continue;
+    var vals = splitLine(lines[i]);
     var row = {};
-    for (var j = 0; j < headers.length; j++) {
-      row[headers[j]] = (vals[j] || "").replace(/"/g,"").trim();
+    for (var j = 0; j < header.length; j++) {
+      row[header[j].trim()] = (vals[j] || "").trim();
     }
     rows.push(row);
   }
   return rows;
 }
 
-function parseMoney(s) {
-  if (!s) return 0;
-  return parseFloat(s.replace(/[$,]/g,"")) || 0;
+function splitLine(line) {
+  var res = [], cur = "", inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var c = line[i];
+    if (c === '"') { inQ = !inQ; continue; }
+    if (c === ',' && !inQ) { res.push(cur); cur = ""; continue; }
+    cur += c;
+  }
+  res.push(cur);
+  return res;
 }
 
-var DATA = { summary: null, balances: null, review: null };
-var CHARTS = {};
+function money(s) {
+  if (!s) return 0;
+  return parseFloat(s.toString().replace(/[$,]/g,"")) || 0;
+}
 
-function destroyChart(id) {
-  if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; }
+function showLoad(id) { var el = q(id+"-loading"); if(el) el.style.display="flex"; }
+function hideLoad(id, bodyId) {
+  var el = q(id+"-loading"); if(el) el.style.display="none";
+  var bd = q(bodyId||id+"-body"); if(bd) bd.style.display="block";
+}
+function showErr(id, msg) {
+  var el = q(id+"-loading");
+  if (el) el.innerHTML = '<div class="errbx">'+msg+'</div>';
 }
 
 // ============================================================
-// FETCH DATA
+// FETCH
 // ============================================================
 function fetchCSV(url) {
-  return fetch(url).then(function(r) { return r.text(); }).then(parseCSV);
+  return fetch(url).then(function(r) {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.text();
+  }).then(parseCSV);
 }
 
 function loadAll() {
-  Promise.all([
-    fetchCSV(URLS.summary),
-    fetchCSV(URLS.balances),
-    fetchCSV(URLS.review)
-  ]).then(function(results) {
-    DATA.summary  = results[0];
-    DATA.balances = results[1];
-    DATA.review   = results[2];
-    renderAll();
+  q("sync-time").textContent = "loading...";
+  // For now use the existing published URLs for balances
+  // Ledger will be added once setupSheets creates the new tab structure
+  var balURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0Z4m-psTP9EPzFopS_cvOyannuLqtXxg9BEJpqaX75ZBVe99B4wRdWTPpGRRHofOL5VRTt99gSYqN/pub?gid=730337422&single=true&output=csv";
+
+  fetchCSV(balURL).then(function(r) {
+    DATA.balances = r;
+    renderInvestments();
+    renderPoints();
+    renderCashFlow();
+    renderTravel();
+    q("sync-time").textContent = new Date().toLocaleTimeString();
   }).catch(function(e) {
-    showError("Could not load data from Google Sheets. Make sure the tabs are published (File -> Share -> Publish to web).<br><br>Error: " + e.message);
+    q("sync-time").textContent = "error";
+    console.error(e);
   });
-}
 
-function showError(msg) {
-  ["overview","spending","cashflow","points","networth"].forEach(function(p) {
-    var l = $("loading-" + p);
-    if (l) l.innerHTML = '<div class="error-box">Could not load data.<br><small>' + msg + '</small></div>';
-  });
-}
-
-// ============================================================
-// PARSE SUMMARY DATA
-// Row layout: col A = category name, cols B-M = Jan-Dec
-// ============================================================
-function parseSummary() {
-  if (!DATA.summary) return {};
-  var result = {};
-  DATA.summary.forEach(function(row) {
-    var cat = Object.values(row)[0];
-    if (!cat || cat === "Category") return;
-    result[cat] = {};
-    MONTHS.forEach(function(mo, idx) {
-      var val = Object.values(row)[idx + 1];
-      result[cat][mo] = parseMoney(val);
-    });
-  });
-  return result;
+  // Render static/computed tabs immediately
+  renderOverviewStatic();
+  renderSpendingStatic();
 }
 
 // ============================================================
-// PARSE BALANCES DATA
+// RENDER OVERVIEW (uses ledger data when available, fallback to static)
 // ============================================================
-function parseBalances() {
-  if (!DATA.balances) return {};
-  var b = {};
-  DATA.balances.forEach(function(row) {
-    var keys = Object.keys(row);
-    if (keys.length < 2) return;
-    var label = row[keys[0]];
-    var val   = parseMoney(row[keys[1]]);
-    if (label) b[label.toLowerCase().trim()] = val;
-  });
-  return b;
-}
+function renderOverviewStatic() {
+  // Static financial data we know
+  var BASE = 8800, FIXED = 5938;
+  var checking = 9000, hysa = 20000, fil = 25000;
+  var liquid = checking + hysa + fil;
+  var brokbal = 47661;
 
-// ============================================================
-// RENDER ALL PAGES
-// ============================================================
-function renderAll() {
-  renderOverview();
-  renderSpending();
-  renderCashFlow();
-  renderTravel();
-  renderPoints();
-  renderNetWorth();
-}
-
-// ============================================================
-// OVERVIEW
-// ============================================================
-function renderOverview() {
-  var summary  = parseSummary();
-  var balances = parseBalances();
-
-  // Find most recent month with data
-  var latestMo = "Mar";
-  MONTHS.forEach(function(mo) {
-    var hasData = Object.values(summary).some(function(c) { return (c[mo] || 0) > 0; });
-    if (hasData) latestMo = mo;
-  });
-
-  $("current-month-label").textContent = latestMo + " 2026";
-
-  // Total spending this month
-  var monthTotal = 0;
-  Object.values(summary).forEach(function(c) { monthTotal += (c[latestMo] || 0); });
-
-  // 3-month average
-  var recentMonths = MONTHS.slice(0, MONTHS.indexOf(latestMo) + 1).slice(-3);
-  var avgTotal = 0;
-  recentMonths.forEach(function(mo) {
-    Object.values(summary).forEach(function(c) { avgTotal += (c[mo] || 0); });
-  });
-  avgTotal = avgTotal / recentMonths.length;
-
-  // Checking + HYSA
-  var liquid = (balances["checking balance (across accounts)"] || 9000) +
-               (balances["hysa (marcus)"] || 20000) +
-               (balances["fil reimbursement (0 once received)"] || 25000);
-
-  var reviewPending = DATA.review ? DATA.review.filter(function(r) {
-    var status = (r["Status"] || r[Object.keys(r).pop()] || "").toLowerCase();
-    return status.indexOf("resolved") === -1 && status.length > 0;
-  }).length : 0;
-
-  // Metrics
-  $("overview-metrics").innerHTML = [
-    { label: "Spending -- " + latestMo, val: fmt(monthTotal), sub: "all 4 cards", cls: "" },
-    { label: "3-month average", val: fmt(avgTotal), sub: "recurring discretionary", cls: "" },
-    { label: "Liquid assets", val: fmt(liquid), sub: "checking + HYSA + FIL pending", cls: "green" },
-    { label: "Items to review", val: reviewPending, sub: "in Needs Review tab", cls: reviewPending > 0 ? "amber" : "green" }
+  q("ov-metrics").innerHTML = [
+    {l:"Base take-home/mo", v:fmt(BASE), s:"combined", c:""},
+    {l:"Fixed obligations/mo", v:fmt(FIXED), s:"non-negotiable", c:"r"},
+    {l:"After fixed/mo", v:fmt(BASE-FIXED), s:"before bonuses", c:"a"},
+    {l:"Liquid assets", v:fmt(liquid), s:"checking + HYSA + FIL pending", c:"g"},
+    {l:"Net worth (excl. home)", v:fmt(229000), s:"assets minus loans", c:"g"}
   ].map(function(m) {
-    return '<div class="metric"><div class="metric-label">' + m.label + '</div>' +
-           '<div class="metric-value ' + m.cls + '">' + m.val + '</div>' +
-           '<div class="metric-sub">' + m.sub + '</div></div>';
+    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v '+m.c+'">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
   }).join("");
 
-  // Donut chart - current month
-  var donutCats = Object.keys(summary).filter(function(c) { return (summary[c][latestMo] || 0) > 0; });
-  donutCats.sort(function(a,b) { return (summary[b][latestMo]||0) - (summary[a][latestMo]||0); });
-  var donutVals = donutCats.map(function(c) { return Math.round(summary[c][latestMo] || 0); });
-  var donutColors = donutCats.map(function(c) { return CAT_COLORS[c] || "#888"; });
+  // Windfalls
+  var now = new Date(); var mo = now.getMonth();
+  var wf = [
+    {mo:5, l:"June -- FIL reimbursement", v:25000},
+    {mo:5, l:"June -- Amanda Q2 bonus", v:2150},
+    {mo:6, l:"July -- Aaron H1 commission", v:2500},
+    {mo:8, l:"September -- Amanda Q3 bonus", v:2150},
+    {mo:11,l:"December -- Aaron H2 + Amanda Q4", v:4650}
+  ].filter(function(w){return w.mo >= mo;});
+  var wfTotal = wf.reduce(function(a,w){return a+w.v;},0);
+  q("ov-windfalls").innerHTML = wf.map(function(w){
+    return '<div class="row"><span class="rl">'+w.l+'</span><span class="ra g">'+fmt(w.v)+' net est.</span></div>';
+  }).join("") + '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total remaining</span><span class="ra g" style="font-size:1rem">'+fmt(wfTotal)+'</span></div>';
 
-  destroyChart("donut-chart");
-  CHARTS["donut-chart"] = new Chart($("donut-chart"), {
-    type: "doughnut",
-    data: { labels: donutCats, datasets: [{ data: donutVals, backgroundColor: donutColors, borderWidth: 2, borderColor: "#f8f5f0" }] },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: "62%",
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + fmt(c.raw); } } } }
-    }
+  // Brokerage progress
+  var pct = Math.min(100, Math.round(brokbal/485000*100));
+  var rem = 485000 - brokbal;
+  var mos = Math.ceil(rem/2500);
+  var yrs = Math.floor(mos/12), moRem = mos%12;
+  q("ov-brokprog").innerHTML =
+    '<div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:13px">' +
+    '<span>FIL obligation progress</span><span style="font-family:var(--mono);font-weight:500">'+fmt(brokbal)+' of $485,000</span></div>' +
+    '<div class="inv-bar"><div class="inv-fill" style="width:'+pct+'%;background:var(--green2)"></div></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-top:.35rem;font-size:11px;color:var(--ink3)">' +
+    '<span>'+pct+'% complete</span>' +
+    '<span>~'+yrs+'yr'+(moRem>0?' '+moRem+'mo':'')+' remaining at $2,500/mo</span></div>';
+
+  // Placeholder donut and trend (will be real once Ledger tab is published)
+  var cats = Object.keys(TARGETS).filter(function(c){return TARGETS[c]>0;});
+  var vals = cats.map(function(c){return TARGETS[c];});
+  dc("ch-donut");
+  CHARTS["ch-donut"] = new Chart(q("ch-donut"),{
+    type:"doughnut",
+    data:{labels:cats,datasets:[{data:vals,backgroundColor:cats.map(function(c){return CAT_COLORS[c]||"#888";}),borderWidth:2,borderColor:"#f7f4ef"}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:"62%",
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw)+"/mo target";}}}}}
   });
-
-  var legendEl = $("donut-legend");
-  legendEl.innerHTML = donutCats.slice(0, 8).map(function(c) {
-    return '<div class="legend-item"><div class="legend-dot" style="background:' + (CAT_COLORS[c]||"#888") + '"></div>' + c + ' ' + fmt(summary[c][latestMo]||0) + '</div>';
+  q("donut-leg").innerHTML = cats.slice(0,8).map(function(c){
+    return '<div class="leg-i"><div class="leg-d" style="background:'+(CAT_COLORS[c]||"#888")+'"></div>'+c.split(" &")[0]+'</div>';
   }).join("");
+  q("ov-mo").textContent = "Budget targets";
 
-  // Trend line - total per month
-  var trendMonths = MONTHS.slice(0, MONTHS.indexOf(latestMo) + 1);
-  var trendVals = trendMonths.map(function(mo) {
-    var t = 0;
-    Object.values(summary).forEach(function(c) { t += (c[mo] || 0); });
-    return Math.round(t);
+  // Trend placeholder
+  dc("ch-trend");
+  CHARTS["ch-trend"] = new Chart(q("ch-trend"),{
+    type:"line",
+    data:{labels:["Jan","Feb","Mar"],
+      datasets:[{label:"Spending",data:[7120,5290,7000],
+        borderColor:"#1a4731",backgroundColor:"rgba(26,71,49,.08)",
+        borderWidth:2,pointBackgroundColor:"#1a4731",pointRadius:4,fill:true,tension:.3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:"DM Mono",size:10},color:"#888"}},
+        y:{grid:{color:"rgba(0,0,0,0.04)"},ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"}}}}
   });
 
-  destroyChart("trend-chart");
-  CHARTS["trend-chart"] = new Chart($("trend-chart"), {
-    type: "line",
-    data: {
-      labels: trendMonths,
-      datasets: [{
-        label: "Total spend",
-        data: trendVals,
-        borderColor: "#1a4731",
-        backgroundColor: "rgba(26,71,49,0.08)",
-        borderWidth: 2,
-        pointBackgroundColor: "#1a4731",
-        pointRadius: 4,
-        fill: true,
-        tension: 0.3
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + fmt(c.raw); } } } },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" } },
-        y: { grid: { color: "rgba(0,0,0,0.04)" }, ticks: { callback: function(v) { return "$" + v.toLocaleString(); }, font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" } }
-      }
-    }
-  });
-
-  // Windfall calendar
-  var now = new Date();
-  var curMonth = now.getMonth();
-  var windfalls = [
-    { mo: 5, label: "June -- Amanda Q2 bonus", amt: 2150, type: "bon" },
-    { mo: 6, label: "July -- Aaron H1 commission", amt: 2500, type: "com" },
-    { mo: 8, label: "September -- Amanda Q3 bonus", amt: 2150, type: "bon" },
-    { mo: 11, label: "December -- Aaron H2 + Amanda Q4", amt: 4650, type: "com" }
-  ];
-  var remaining = windfalls.filter(function(w) { return w.mo >= curMonth; });
-  var totalRemaining = remaining.reduce(function(a, w) { return a + w.amt; }, 0);
-
-  $("windfall-card").innerHTML =
-    remaining.map(function(w) {
-      return '<div class="row"><span class="row-label">' + w.label + '</span>' +
-             '<span class="row-amt green">' + fmt(w.amt) + ' net est.</span></div>';
-    }).join("") +
-    '<div class="row" style="margin-top:4px;"><span class="row-label" style="font-weight:500;">Total remaining 2026</span>' +
-    '<span class="row-amt green" style="font-size:1rem;">' + fmt(totalRemaining) + '</span></div>';
-
-  $("loading-overview").style.display = "none";
-  $("content-overview").style.display = "block";
+  hideLoad("ov", "ov-body");
 }
 
 // ============================================================
-// SPENDING
+// RENDER SPENDING (static budget view)
 // ============================================================
-function renderSpending() {
-  var summary = parseSummary();
-  var latestMo = "Mar";
-  MONTHS.forEach(function(mo) {
-    var hasData = Object.values(summary).some(function(c) { return (c[mo] || 0) > 0; });
-    if (hasData) latestMo = mo;
+function renderSpendingStatic() {
+  // Jan-Feb actuals we know
+  var actuals = {
+    "Groceries & Household": {jan:907, feb:1039},
+    "Costco":                {jan:371, feb:818},
+    "Restaurants & Bars":   {jan:855, feb:492},
+    "Amazon":                {jan:384, feb:269},
+    "Clothing":              {jan:129, feb:293},
+    "Entertainment":         {jan:482, feb:213},
+    "Gas":                   {jan:155, feb:155},
+    "Subscriptions":         {jan:170, feb:170},
+    "Fixed":                 {jan:495, feb:495},
+    "Home":                  {jan:0,   feb:299},
+    "Pet":                   {jan:0,   feb:109},
+    "Transport":             {jan:130, feb:35},
+    "Auto":                  {jan:0,   feb:677},
+    "Travel":                {jan:0,   feb:0},
+    "Other":                 {jan:293, feb:229}
+  };
+
+  var bars = q("sp-bars");
+  bars.innerHTML = "";
+  Object.keys(TARGETS).forEach(function(cat) {
+    var a = actuals[cat] || {jan:0,feb:0};
+    var avg = Math.round((a.jan + a.feb) / 2);
+    var tgt = TARGETS[cat];
+    var pct = tgt > 0 ? Math.min(100, Math.round(avg/tgt*100)) : 0;
+    var over = tgt > 0 && avg > tgt;
+    var diff = tgt > 0 ? Math.abs(tgt-avg) : 0;
+    var tagTxt = tgt > 0 ? (over ? "+"+fmt(avg-tgt)+" over" : "-"+fmt(tgt-avg)+" under") : "no target";
+    var tagCls = tgt > 0 ? (over ? "tag-r" : "tag-g") : "tag-n";
+    bars.innerHTML += '<div class="prow">' +
+      '<span class="pl">'+cat+'</span>' +
+      '<div class="pt"><div class="pf" style="width:'+pct+'%;background:'+(CAT_COLORS[cat]||"#888")+'"></div></div>' +
+      '<span class="pa">'+(avg>0?fmt(avg)+"/mo avg":"--")+'</span>' +
+      '<span class="tag '+tagCls+'">'+tagTxt+'</span></div>';
   });
 
-  // Budget vs actual bars
-  var cats = Object.keys(TARGETS);
-  var barsEl = $("spending-bars");
-  barsEl.innerHTML = "";
-
-  cats.forEach(function(cat) {
-    var avg = 0;
-    var months = MONTHS.slice(0, MONTHS.indexOf(latestMo) + 1);
-    months.forEach(function(mo) { avg += (summary[cat] ? summary[cat][mo] || 0 : 0); });
-    avg = avg / months.length;
-
-    var target = TARGETS[cat];
-    var pct = target > 0 ? Math.min(100, Math.round(avg / target * 100)) : 0;
-    var over = target > 0 && avg > target;
-    var color = CAT_COLORS[cat] || "#888";
-    var diffStr = target > 0
-      ? (over
-        ? '<span class="tag tag-red">+' + fmt(avg - target) + ' over</span>'
-        : '<span class="tag tag-green">-' + fmt(target - avg) + ' under</span>')
-      : '<span class="tag" style="background:var(--paper2);color:var(--ink3);">no target</span>';
-
-    barsEl.innerHTML += '<div class="prog-row">' +
-      '<span class="prog-label">' + cat + '</span>' +
-      '<div class="prog-track"><div class="prog-fill" style="width:' + pct + '%;background:' + color + ';"></div></div>' +
-      '<span class="prog-amt">' + fmt(avg) + '/mo</span>' +
-      diffStr + '</div>';
+  // Stacked chart
+  var months = ["Jan","Feb"];
+  dc("ch-stack");
+  CHARTS["ch-stack"] = new Chart(q("ch-stack"),{
+    type:"bar",
+    data:{labels:months,datasets:Object.keys(actuals).map(function(cat){
+      return {label:cat,data:[actuals[cat].jan,actuals[cat].feb],backgroundColor:CAT_COLORS[cat]||"#888",borderWidth:0};
+    })},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{stacked:true,ticks:{font:{family:"DM Mono",size:10},color:"#888"},grid:{display:false}},
+        y:{stacked:true,ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"},grid:{color:"rgba(0,0,0,0.04)"}}}}
   });
-
-  // Stacked bar
-  var moMonths = MONTHS.slice(0, MONTHS.indexOf(latestMo) + 1);
-  destroyChart("stacked-bar");
-  CHARTS["stacked-bar"] = new Chart($("stacked-bar"), {
-    type: "bar",
-    data: {
-      labels: moMonths,
-      datasets: cats.map(function(cat) {
-        return {
-          label: cat,
-          data: moMonths.map(function(mo) { return Math.round((summary[cat] && summary[cat][mo]) || 0); }),
-          backgroundColor: CAT_COLORS[cat] || "#888",
-          borderWidth: 0
-        };
-      })
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { stacked: true, ticks: { autoSkip: false, font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" }, grid: { display: false } },
-        y: { stacked: true, ticks: { callback: function(v) { return "$" + v.toLocaleString(); }, font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" }, grid: { color: "rgba(0,0,0,0.04)" } }
-      }
-    }
-  });
-
-  var stackedLeg = $("stacked-legend");
-  stackedLeg.innerHTML = cats.map(function(c) {
-    return '<div class="legend-item"><div class="legend-dot" style="background:' + (CAT_COLORS[c]||"#888") + '"></div>' + c + '</div>';
+  q("stack-leg").innerHTML = Object.keys(actuals).map(function(c){
+    return '<div class="leg-i"><div class="leg-d" style="background:'+(CAT_COLORS[c]||"#888")+'"></div>'+c.split(" &")[0]+'</div>';
   }).join("");
 
-  // Cut opportunities
-  var cutEl = $("cut-card");
-  var cuts = [
-    { label: "Clothing: $380 -> $150/mo target", saves: 230, note: "Biggest single lever. Funds travel + Barre classes." },
-    { label: "Amazon: $370 -> $200/mo target", saves: 170, note: "Diffuse spend -- set a mental ceiling." },
-    { label: "Restaurants: $370 -> $300/mo", saves: 70, note: "Protect weekend dinners, cut weekday convenience." },
-    { label: "Grocery consolidation (lean into ALDI + TJ's)", saves: 100, note: "Reduce Jewel/Fresh Thyme supplemental runs." }
-  ];
-  cutEl.innerHTML = '<div class="card-title">Where the cuts come from</div>' +
-    cuts.map(function(c) {
-      return '<div class="row"><span class="row-label">' + c.label + '<br><span style="font-size:11px;color:var(--ink3);">' + c.note + '</span></span>' +
-             '<span class="row-amt green">+' + fmt(c.saves) + '/mo</span></div>';
-    }).join("") +
-    '<div class="row" style="margin-top:4px;"><span class="row-label" style="font-weight:500;">Total freed up</span><span class="row-amt green" style="font-size:1rem;">$570/mo . $6,840/yr</span></div>';
+  // YTD totals
+  var ytd = q("sp-ytd");
+  ytd.innerHTML = "";
+  var ytdTotal = 0;
+  Object.keys(actuals).forEach(function(cat) {
+    var a = actuals[cat];
+    var total = a.jan + a.feb;
+    ytdTotal += total;
+    ytd.innerHTML += '<div class="row"><span class="rl">'+cat+'</span><span class="ra">'+fmt(total)+'</span></div>';
+  });
+  ytd.innerHTML += '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">YTD total (Jan-Feb)</span><span class="ra" style="font-size:1rem">'+fmt(ytdTotal)+'</span></div>';
 
-  $("loading-spending").style.display = "none";
-  $("content-spending").style.display = "block";
+  hideLoad("sp", "sp-body");
 }
 
 // ============================================================
 // CASH FLOW
 // ============================================================
 function renderCashFlow() {
-  var annualBase = BASE_INCOME * 9;
-  var annualBonus = CF_MONTHS.reduce(function(a,m) { return a + m.bonus; }, 0);
-  var annualFil = CF_MONTHS.reduce(function(a,m) { return a + m.fil; }, 0);
-  var annualTravel = CF_MONTHS.reduce(function(a,m) { return a + m.travel; }, 0);
-  var annualTax = CF_MONTHS.reduce(function(a,m) { return a + m.tax; }, 0);
-  var annualFixed = FIXED_OBLIGATIONS * 9;
-  var annualNet = annualBase + annualBonus + annualFil - annualFixed - annualTravel - annualTax;
-
-  $("cf-metrics").innerHTML = [
-    { label: "Base take-home/mo", val: fmt(BASE_INCOME), sub: "combined", cls: "" },
-    { label: "Fixed obligations/mo", val: fmt(FIXED_OBLIGATIONS), sub: "non-negotiable", cls: "red" },
-    { label: "After fixed", val: fmt(BASE_INCOME - FIXED_OBLIGATIONS), sub: "before bonuses", cls: "amber" },
-    { label: "Variable income (Apr-Dec)", val: fmt(annualBonus + annualFil), sub: "bonuses + commission + FIL", cls: "green" },
-    { label: "Apr-Dec net (projected)", val: fmt(annualNet), sub: "after all obligations + travel", cls: "green" }
-  ].map(function(m) {
-    return '<div class="metric"><div class="metric-label">' + m.label + '</div>' +
-           '<div class="metric-value ' + m.cls + '">' + m.val + '</div>' +
-           '<div class="metric-sub">' + m.sub + '</div></div>';
-  }).join("");
-
-  // Bar chart
-  destroyChart("cf-bar");
-  CHARTS["cf-bar"] = new Chart($("cf-bar"), {
-    type: "bar",
-    data: {
-      labels: CF_MONTHS.map(function(m) { return m.mo; }),
-      datasets: [
-        { label: "Base income", data: CF_MONTHS.map(function() { return BASE_INCOME; }), backgroundColor: "#b4b2a9", borderWidth: 0 },
-        { label: "Bonus / commission", data: CF_MONTHS.map(function(m) { return m.bonus; }), backgroundColor: "#2d7a52", borderWidth: 0 },
-        { label: "FIL reimbursement", data: CF_MONTHS.map(function(m) { return m.fil; }), backgroundColor: "#9FE1CB", borderWidth: 0 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + c.dataset.label + ": " + fmt(c.raw); } } } },
-      scales: {
-        x: { stacked: true, ticks: { autoSkip: false, font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" }, grid: { display: false } },
-        y: { stacked: true, ticks: { callback: function(v) { return "$" + v.toLocaleString(); }, font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" }, grid: { color: "rgba(0,0,0,0.04)" } }
-      }
-    }
+  var BASE = 8800, FIXED = 5938;
+  var cfMos = [
+    {mo:"Apr",bon:0,    fil:0,    tr:0,   tx:0},
+    {mo:"May",bon:0,    fil:0,    tr:405, tx:0},
+    {mo:"Jun",bon:2150, fil:25000,tr:1290,tx:6300},
+    {mo:"Jul",bon:2500, fil:0,    tr:0,   tx:0},
+    {mo:"Aug",bon:0,    fil:0,    tr:1435,tx:0},
+    {mo:"Sep",bon:2150, fil:0,    tr:1100,tx:5700},
+    {mo:"Oct",bon:0,    fil:0,    tr:0,   tx:0},
+    {mo:"Nov",bon:0,    fil:0,    tr:0,   tx:0},
+    {mo:"Dec",bon:4650, fil:0,    tr:400, tx:0}
+  ];
+  var totB = 0, totV = 0, totTx = 0, totTr = 0, totNet = 0;
+  cfMos.forEach(function(m){
+    totB  += BASE;
+    totV  += m.bon + m.fil;
+    totTx += m.tx;
+    totTr += m.tr;
+    totNet += (BASE + m.bon + m.fil) - (FIXED + m.tx + m.tr);
   });
 
-  $("fixed-card").innerHTML = [
-    ["Student loan -- Laurel Road (4.75%)", 881],
-    ["Car payment -- 4Runner (Wells Fargo 6.59%)", 524],
-    ["IUL policy -- Mutual of Omaha", 500],
-    ["Brokerage obligation -- FIL", 2500],
-    ["Health / dental / vision", 224],
-    ["Auto + homeowners insurance", 309],
-    ["Property tax reserve", 1000]
-  ].map(function(r) {
-    return '<div class="row"><span class="row-label">' + r[0] + '</span><span class="row-amt">' + fmt(r[1]) + '</span></div>';
-  }).join("") +
-  '<div class="row" style="margin-top:4px;"><span class="row-label" style="font-weight:500;">Total fixed / mo</span><span class="row-amt" style="font-size:1rem;">' + fmt(FIXED_OBLIGATIONS) + '</span></div>';
+  q("cf-metrics").innerHTML = [
+    {l:"Combined base (9mo)", v:fmt(totB), s:"", c:""},
+    {l:"Variable + FIL (9mo)", v:fmt(totV), s:"bonuses + commission + FIL", c:"g"},
+    {l:"Fixed out (9mo)", v:fmt(FIXED*9), s:"", c:"r"},
+    {l:"Travel (9mo)", v:fmt(totTr), s:"all 5 trips", c:"r"},
+    {l:"Tax (9mo)", v:fmt(totTx), s:"property tax installments", c:"r"},
+    {l:"Projected net", v:fmt(totNet), s:"Apr-Dec after everything", c:"g"}
+  ].map(function(m){
+    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v '+m.c+'">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
+  }).join("");
 
-  $("tax-card").innerHTML =
-    '<div class="card-title">Kane County property tax -- est. $12,000</div>' +
-    '<div class="row"><span class="row-label">1st installment (est. ~June 3)</span><span class="row-amt red">~$6,300</span></div>' +
-    '<div class="row"><span class="row-label">2nd installment (est. ~Sept 3)</span><span class="row-amt red">~$5,700</span></div>' +
-    '<div class="row"><span class="row-label">Funding source</span><span class="row-note">HYSA + FIL $25k reimbursement</span></div>' +
-    '<div class="row"><span class="row-label">CC option (2.1% fee = $252)</span><span class="row-note">Fee exceeds MR value -- pay cash</span></div>' +
-    '<div class="row"><span class="row-label">$1,000/mo reserve building toward 2027</span><span class="row-amt green">+$8,000 by Dec</span></div>';
+  dc("ch-cf");
+  CHARTS["ch-cf"] = new Chart(q("ch-cf"),{
+    type:"bar",
+    data:{labels:cfMos.map(function(m){return m.mo;}),
+      datasets:[
+        {label:"Base",data:cfMos.map(function(){return BASE;}),backgroundColor:"#b4b2a9",borderWidth:0},
+        {label:"Bonus/Comm",data:cfMos.map(function(m){return m.bon;}),backgroundColor:"#2d7a52",borderWidth:0},
+        {label:"FIL",data:cfMos.map(function(m){return m.fil;}),backgroundColor:"#9fe1cb",borderWidth:0}
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+c.dataset.label+": "+fmt(c.raw);}}}},
+      scales:{x:{stacked:true,ticks:{font:{family:"DM Mono",size:10},color:"#888"},grid:{display:false}},
+        y:{stacked:true,ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"},grid:{color:"rgba(0,0,0,0.04)"}}}}
+  });
 
-  $("loading-cashflow").style.display = "none";
-  $("content-cashflow").style.display = "block";
+  q("cf-fixed").innerHTML = [
+    ["Student loan -- Laurel Road (4.75%)",881],
+    ["Car payment -- 4Runner (Wells Fargo 6.59%)",524],
+    ["IUL policy -- Mutual of Omaha",500],
+    ["Brokerage obligation -- FIL",2500],
+    ["Health / dental / vision",224],
+    ["Auto + homeowners insurance",309],
+    ["Property tax reserve",1000]
+  ].map(function(r){return '<div class="row"><span class="rl">'+r[0]+'</span><span class="ra">'+fmt(r[1])+'</span></div>';}).join("") +
+  '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total</span><span class="ra" style="font-size:1rem">'+fmt(5938)+'</span></div>';
+
+  q("cf-tax").innerHTML =
+    '<div class="card-title">Kane County -- est. $12,000 total</div>' +
+    '<div class="row"><span class="rl">1st installment (~June 3)</span><span class="ra r">~$6,300</span></div>' +
+    '<div class="row"><span class="rl">2nd installment (~Sept 3)</span><span class="ra r">~$5,700</span></div>' +
+    '<div class="row"><span class="rl">Pay via CC? (2.1% fee = $252)</span><span style="font-size:11px;color:var(--ink3)">Fee exceeds MR value -- pay cash</span></div>' +
+    '<div class="row"><span class="rl">$1,000/mo reserve building now</span><span class="ra g">+$8,000 by Dec</span></div>';
 }
 
 // ============================================================
-// TRAVEL
+// INVESTMENTS
 // ============================================================
-function renderTravel() {
-  $("travel-metrics").innerHTML = [
-    { label: "Total cash out-of-pocket", val: "~$4,630", sub: "all 5 trips", cls: "red" },
-    { label: "Monthly reserve needed", val: "$385", sub: "May-Dec", cls: "" },
-    { label: "Points covering", val: "~$2,800", sub: "hotels + flights", cls: "green" },
-    { label: "Year-end fund surplus", val: "~$1,295", sub: "returns to HYSA", cls: "green" }
-  ].map(function(m) {
-    return '<div class="metric"><div class="metric-label">' + m.label + '</div>' +
-           '<div class="metric-value ' + m.cls + '">' + m.val + '</div>' +
-           '<div class="metric-sub">' + m.sub + '</div></div>';
-  }).join("");
-
-  var reserve = 385;
-  var trips = [
-    { mo: "May", label: "Shawnee camping", spend: 405 },
-    { mo: "Jun", label: "Mukwonago lake house", spend: 1290 },
-    { mo: "Jul", label: "Building for Europe", spend: 0 },
-    { mo: "Aug", label: "Europe self-funded", spend: 1435 },
-    { mo: "Sep", label: "Phoenix golf", spend: 1100 },
-    { mo: "Oct", label: "Recovering", spend: 0 },
-    { mo: "Nov", label: "Building for Dec", spend: 0 },
-    { mo: "Dec", label: "Phoenix wedding", spend: 400 }
+function renderInvestments() {
+  var accounts = [
+    {name:"401k -- Aaron",     balance:70000,  color:"#1a4731"},
+    {name:"401k -- Amanda",    balance:36000,  color:"#2d7a52"},
+    {name:"Roth IRA",          balance:12273,  color:"#2980b9"},
+    {name:"Brokerage (FIL)",   balance:47661,  color:"#8e44ad"},
+    {name:"IUL cash value",    balance:50000,  color:"#d35400"},
+    {name:"HSA",               balance:13482,  color:"#16a085"}
   ];
+  var totalInv = accounts.reduce(function(a,ac){return a+ac.balance;},0);
 
-  var cumulative = 0;
-  var fundEl = $("travel-fund");
-  fundEl.innerHTML = '<div class="card-title">Travel fund balance <span class="card-title-mono">$385/mo reserve</span></div>';
-  trips.forEach(function(t) {
-    cumulative += reserve;
-    cumulative -= t.spend;
-    var neg = cumulative < 0;
-    fundEl.innerHTML += '<div class="row">' +
-      '<span class="row-label" style="min-width:36px;font-weight:500;">' + t.mo + '</span>' +
-      '<span class="row-label">' + t.label + (t.spend > 0 ? ' <span style="color:var(--red);font-size:11px;">-' + fmt(t.spend) + '</span>' : '') + '</span>' +
-      '<span class="row-amt ' + (neg ? "red" : "green") + '">' + (neg ? "" : "+") + fmt(cumulative) + '</span></div>';
+  q("inv-metrics").innerHTML = accounts.map(function(a){
+    return '<div class="mc"><div class="mc-l">'+a.name+'</div><div class="mc-v">'+fmt(a.balance)+'</div><div class="mc-s">current balance</div></div>';
+  }).join("") + '<div class="mc"><div class="mc-l">Total invested</div><div class="mc-v g">'+fmt(totalInv)+'</div><div class="mc-s">excl. home</div></div>';
+
+  // Wealth trend placeholder
+  dc("ch-wealth");
+  CHARTS["ch-wealth"] = new Chart(q("ch-wealth"),{
+    type:"line",
+    data:{labels:["Jan","Feb","Mar","Apr"],
+      datasets:[{label:"Total",data:[220000,223000,226000,229000],
+        borderColor:"#1a4731",backgroundColor:"rgba(26,71,49,.08)",borderWidth:2,
+        pointBackgroundColor:"#1a4731",pointRadius:4,fill:true,tension:.3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:"DM Mono",size:10},color:"#888"}},
+        y:{grid:{color:"rgba(0,0,0,0.04)"},ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"}}}}
   });
 
-  var tripsData = [
-    { title: "MDW Camping -- Shawnee National Forest", date: "Memorial Day Weekend", color: "#4a9e6e",
-      rows: [["Gas (Geneva -> Shawnee)", "~$60"],["Campsite x 3 nights","~$75"],["Food + drinks","~$120"],["Gear gaps","~$150"]],
-      total: "~$405 cash", pts: "No points play" },
-    { title: "Mukwonago, WI -- Lake house", date: "Late June, ~5 days", color: "#2d7a52",
-      rows: [["House share","$900"],["Groceries (group share)","~$120"],["Golf round","~$60"],["2 restaurant meals","~$130"],["Beer + misc","~$80"]],
-      total: "~$1,290 cash", pts: "No useful points play" },
-    { title: "Europe -- self-funded portion", date: "Aug 3-8, 2 people", color: "#1a2f5c",
-      rows: [["Florence -> Varenna train","~$80"],["Lake Como lodging 2 nights","25k MR -> Hilton"],["Boat + ferry Como","~$185"],["Car rental (book on CSR)","~$280"],["Ortisei lodging 2 nights","20k MR -> Marriott"],["Dolomites cable cars","~$80"],["Food + Venice + misc","~$490"],["Shopping budget","~$320"]],
-      total: "~$1,435 cash + 45k MR", pts: "Book Hilton Como NOW -- August sells out" },
-    { title: "Phoenix / Pinetop Golf", date: "Sept 24 - Oct 4, 11 days", color: "#6c3483",
-      rows: [["Flights ORD -> PHX (2 pax RT)","20k AA miles"],["Lodging -- FREE entire trip","$0"],["Golf: 7 rounds at White Mtn CC","~$490"],["Gas + groceries + eating out","~$530"],["Incidentals","~$80"]],
-      total: "~$1,100 cash + 20k AA", pts: "Book both PHX trips at same time" },
-    { title: "Phoenix Wedding", date: "Dec 3-6", color: "#922b21",
-      rows: [["Flights ORD -> PHX (2 pax RT)","20k AA miles"],["Lodging -- FREE","$0"],["Wedding gift","~$150"],["Food + incidentals","~$250"]],
-      total: "~$400 cash + 20k AA", pts: "" }
-  ];
+  // Allocation donut
+  dc("ch-alloc");
+  CHARTS["ch-alloc"] = new Chart(q("ch-alloc"),{
+    type:"doughnut",
+    data:{labels:accounts.map(function(a){return a.name;}),
+      datasets:[{data:accounts.map(function(a){return a.balance;}),
+        backgroundColor:accounts.map(function(a){return a.color;}),borderWidth:2,borderColor:"#f7f4ef"}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:"60%",
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}}}
+  });
+  q("alloc-leg").innerHTML = accounts.map(function(a){
+    return '<div class="leg-i"><div class="leg-d" style="background:'+a.color+'"></div>'+a.name.split(" --")[0]+' '+fmt(a.balance)+'</div>';
+  }).join("");
 
-  var tripEl = $("trip-cards");
-  tripEl.innerHTML = tripsData.map(function(t) {
-    return '<div class="trip-card" style="border-left-color:' + t.color + ';margin-bottom:1.25rem;">' +
-      '<div class="trip-title">' + t.title + '</div>' +
-      '<div class="trip-date">' + t.date + '</div>' +
-      t.rows.map(function(r) {
-        return '<div class="row"><span class="row-label">' + r[0] + '</span><span class="row-amt">' + r[1] + '</span></div>';
-      }).join("") +
-      '<div class="row" style="margin-top:4px;"><span class="row-label" style="font-weight:500;">Total</span><span class="row-amt">' + t.total + '</span></div>' +
-      (t.pts ? '<div style="font-size:11px;color:var(--ink3);margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--paper3);">' + t.pts + '</div>' : '') +
+  // Account detail cards
+  q("inv-accounts").innerHTML = accounts.map(function(a){
+    var pct = Math.round(a.balance/totalInv*100);
+    return '<div class="card" style="margin-bottom:.75rem">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline">' +
+      '<span style="font-weight:500">'+a.name+'</span>' +
+      '<span style="font-family:var(--mono);font-size:1.1rem">'+fmt(a.balance)+'</span></div>' +
+      '<div class="inv-bar" style="margin-top:.5rem"><div class="inv-fill" style="width:'+pct+'%;background:'+a.color+'"></div></div>' +
+      '<div style="font-size:11px;color:var(--ink3);margin-top:.3rem">'+pct+'% of total portfolio</div>' +
+      '<div style="font-size:12px;color:var(--ink3);margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--bg2)">Upload your '+a.name+' statement PDF to Claude to see performance history, contributions vs. gains, and trend charts.</div>' +
       '</div>';
   }).join("");
+
+  // Brokerage obligation
+  var brok = 47661;
+  var pct = Math.min(100, Math.round(brok/485000*100));
+  var rem = 485000 - brok;
+  var mos = Math.ceil(rem/2500);
+  var yrs = Math.floor(mos/12), moRem = mos%12;
+  q("inv-brok").innerHTML =
+    '<div class="card-title">FIL obligation -- $2,500/mo until $485,000 invested</div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:.5rem">' +
+    '<span>'+fmt(brok)+' contributed</span><span style="font-family:var(--mono)">'+pct+'%</span></div>' +
+    '<div class="inv-bar"><div class="inv-fill" style="width:'+pct+'%;background:var(--green2)"></div></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-top:.3rem;font-size:11px;color:var(--ink3)">' +
+    '<span>'+fmt(rem)+' remaining</span><span>~'+yrs+'yr'+(moRem>0?' '+moRem+'mo':'')+' at $2,500/mo</span></div>' +
+    '<div class="row" style="margin-top:.75rem"><span class="rl">Obligation can be paused penalty-free if needed</span><span class="tag tag-g">flexible</span></div>' +
+    '<div class="row"><span class="rl">Extra contributions (from bonuses/commission) accelerate payoff</span><span class="tag tag-b">strategy</span></div>';
+
+  hideLoad("inv", "inv-body");
 }
 
 // ============================================================
 // POINTS
 // ============================================================
 function renderPoints() {
-  var balances = parseBalances();
+  var mr=106000, csr=36000, csp=46000, aa=160000;
+  var urP = csr+csp;
 
-  // Try to read from balances tab, fall back to known values
-  var mr  = balances["amex mr (gold -- joint)"] || 106000;
-  var csr = balances["chase ur -- csr (aaron)"] || 36000;
-  var csp = balances["chase ur -- csp (amanda)"] || 46000;
-  var aa  = balances["aa aadvantage miles"] || 160000;
-  var urPooled = csr + csp;
-
-  $("pts-grid").innerHTML = [
-    { name: "Amex MR -- Gold (joint)", val: fmtPts(mr), sub: "~" + fmt(mr * 0.018) + " at 1.8c" },
-    { name: "Chase UR -- CSR (Aaron)", val: fmtPts(csr), sub: "Pool Amanda's CSP here first" },
-    { name: "Chase UR -- CSP (Amanda)", val: fmtPts(csp), sub: "Transfer to CSR before redeeming" },
-    { name: "Chase UR -- Pooled", val: fmtPts(urPooled), sub: "~" + fmt(urPooled * 0.015) + " at 1.5c" },
-    { name: "AA AAdvantage", val: fmtPts(aa), sub: "Protect for intl biz class 2027+" }
-  ].map(function(p) {
-    return '<div class="pts-cell"><div class="pts-name">' + p.name + '</div>' +
-           '<div class="pts-val">' + p.val + '</div>' +
-           '<div class="pts-sub">' + p.sub + '</div></div>';
+  q("pt-grid").innerHTML = [
+    {n:"Amex MR -- Gold (joint)",v:fmtPts(mr),s:"~"+fmt(mr*.018)+" at 1.8c/pt"},
+    {n:"Chase UR -- CSR (Aaron)",v:fmtPts(csr),s:"Pool Amanda's CSP here first"},
+    {n:"Chase UR -- CSP (Amanda)",v:fmtPts(csp),s:"Transfer to CSR before redeeming"},
+    {n:"Chase UR -- Pooled",v:fmtPts(urP),s:"~"+fmt(urP*.015)+" at 1.5c/pt"},
+    {n:"AA AAdvantage",v:fmtPts(aa),s:"Protect for intl biz class 2027+"}
+  ].map(function(p){
+    return '<div class="pcell"><div class="pn">'+p.n+'</div><div class="pv">'+p.v+'</div><div class="ps">'+p.s+'</div></div>';
   }).join("");
 
-  destroyChart("pts-bar");
-  CHARTS["pts-bar"] = new Chart($("pts-bar"), {
-    type: "bar",
-    data: {
-      labels: ["Amex MR", "Chase UR (pooled)", "AA miles"],
-      datasets: [{
-        label: "Conservative value",
-        data: [Math.round(mr * 0.018), Math.round(urPooled * 0.015), Math.round(aa * 0.014)],
-        backgroundColor: ["#1a4731", "#1a2f5c", "#6c3483"],
-        borderWidth: 0,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + fmt(c.raw); } } } },
-      scales: {
-        x: { ticks: { font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" }, grid: { display: false } },
-        y: { ticks: { callback: function(v) { return "$" + v.toLocaleString(); }, font: { family: "JetBrains Mono", size: 10 }, color: "#7a7a7a" }, grid: { color: "rgba(0,0,0,0.04)" } }
-      }
-    }
+  dc("ch-pts");
+  CHARTS["ch-pts"] = new Chart(q("ch-pts"),{
+    type:"bar",
+    data:{labels:["Amex MR","Chase UR (pooled)","AA miles"],
+      datasets:[{data:[Math.round(mr*.018),Math.round(urP*.015),Math.round(aa*.014)],
+        backgroundColor:["#1a4731","#1a2f5c","#6c3483"],borderWidth:0,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return " "+fmt(c.raw);}}}},
+      scales:{x:{ticks:{callback:function(v){return "$"+v.toLocaleString();},font:{family:"DM Mono",size:10},color:"#888"},grid:{color:"rgba(0,0,0,0.04)"}},
+        y:{ticks:{font:{family:"DM Mono",size:10},color:"#888"},grid:{display:false}}}}
   });
 
-  var redemptions = [
-    { trip: "Europe -- Lake Como (2 nights)", pts: "25k MR -> Hilton", status: "Book NOW", urgent: true },
-    { trip: "Europe -- Ortisei (2 nights)", pts: "20k MR -> Marriott", status: "Book NOW", urgent: true },
-    { trip: "Phoenix Sept -- ORD->PHX (2 pax)", pts: "20k AA miles", status: "Book both PHX together", urgent: false },
-    { trip: "Phoenix Dec -- ORD->PHX (2 pax)", pts: "20k AA miles", status: "Book with Sept", urgent: false }
-  ];
-  $("redemption-rows").innerHTML = redemptions.map(function(r) {
-    return '<div class="row"><span class="row-label">' + r.trip + '<br><span style="font-size:11px;color:var(--ink3);">' + r.pts + '</span></span>' +
-           '<span class="tag ' + (r.urgent ? "tag-red" : "tag-amber") + '">' + r.status + '</span></div>';
+  q("pt-plan").innerHTML = [
+    {trip:"Europe -- Lake Como (2 nights)",pts:"25k MR to Hilton",urgent:true},
+    {trip:"Europe -- Ortisei (2 nights)",pts:"20k MR to Marriott",urgent:true},
+    {trip:"Phoenix Sept (2 pax RT)",pts:"20k AA miles",urgent:false},
+    {trip:"Phoenix Dec (2 pax RT)",pts:"20k AA miles",urgent:false}
+  ].map(function(r){
+    return '<div class="row"><span class="rl">'+r.trip+'<br><small>'+r.pts+'</small></span>' +
+      '<span class="tag '+(r.urgent?"tag-r":"tag-n")+'">'+(r.urgent?"BOOK NOW":"Upcoming")+'</span></div>';
+  }).join("") +
+  '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total</span><span class="ra">45k MR + 40k AA</span></div>';
+
+  q("pt-post").innerHTML = [
+    {l:"MR after Europe",v:fmtPts(Math.max(0,mr-45000)),s:"+ ongoing earn"},
+    {l:"Chase UR (untouched)",v:fmtPts(urP),s:"if AA used for PHX"},
+    {l:"AA after both PHX",v:fmtPts(Math.max(0,aa-40000)),s:"good for intl biz 2027"}
+  ].map(function(m){
+    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v g">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
   }).join("");
 
-  $("pts-post").innerHTML = [
-    { label: "MR after Europe", val: fmtPts(Math.max(0, mr - 45000)), sub: "+ ongoing earn" },
-    { label: "Chase UR (untouched)", val: fmtPts(urPooled), sub: "if AA used for PHX" },
-    { label: "AA after both PHX", val: fmtPts(Math.max(0, aa - 40000)), sub: "still good for intl biz 2027" }
-  ].map(function(m) {
-    return '<div class="metric"><div class="metric-label">' + m.label + '</div>' +
-           '<div class="metric-value green">' + m.val + '</div>' +
-           '<div class="metric-sub">' + m.sub + '</div></div>';
+  q("pt-strat").innerHTML = '<div class="card-title">Where to put each purchase</div>' +
+    [["All restaurants + groceries","Amex Gold -- 4x MR","Highest earn on your top 2 categories"],
+     ["Everything else","Chase CSR","Earns UR poolable with Amanda's CSP"],
+     ["Costco (no Amex)","Amanda's CSP or Freedom Flex","Only Visa accepted"],
+     ["Car rental in Europe","Chase CSR","Primary rental car insurance included"],
+     ["AA miles -- save for","International business class 2027+","Don't burn on domestic unless great deal"]
+    ].map(function(r){
+      return '<div class="row"><span class="rl">'+r[0]+'</span><span style="text-align:right;font-size:12px"><strong>'+r[1]+'</strong><br><small>'+r[2]+'</small></span></div>';
+    }).join("");
+}
+
+// ============================================================
+// TRAVEL
+// ============================================================
+function renderTravel() {
+  q("tr-metrics").innerHTML = [
+    {l:"Total cash out-of-pocket",v:"~$4,630",s:"all 5 trips",c:"r"},
+    {l:"Monthly reserve needed",v:"$385",s:"May-Dec",c:""},
+    {l:"Points covering",v:"~$2,800",s:"hotels + flights",c:"g"},
+    {l:"Year-end fund surplus",v:"~$1,295",s:"returns to HYSA",c:"g"}
+  ].map(function(m){
+    return '<div class="mc"><div class="mc-l">'+m.l+'</div><div class="mc-v '+m.c+'">'+m.v+'</div><div class="mc-s">'+m.s+'</div></div>';
   }).join("");
 
-  $("card-strategy").innerHTML = '<div class="card-title">Where to put each purchase</div>' +
-    [
-      ["All restaurants + all groceries", "Amex Gold -- 4x MR", "Highest earn on your top 2 categories"],
-      ["Everything else (catch-all)", "Chase CSR -- 3x dining, 1x other", "Also earns UR that pools with Amanda's CSP"],
-      ["Costco (no Amex accepted)", "Amanda's CSP or Freedom Flex", "Costco only takes Visa"],
-      ["Car rental in Europe", "Chase CSR", "Primary rental car insurance included -- no need to buy CDW"],
-      ["AA miles -- save for", "International business class 2027+", "Don't burn on domestic unless amazing deal"]
-    ].map(function(r) {
-      return '<div class="row"><span class="row-label">' + r[0] + '</span>' +
-             '<span style="font-size:12px;color:var(--ink2);text-align:right;"><strong>' + r[1] + '</strong><br><span style="color:var(--ink3);font-size:11px;">' + r[2] + '</span></span></div>';
+  var trips=[{mo:"May",l:"Shawnee camping",spend:405},{mo:"Jun",l:"Mukwonago lake house",spend:1290},
+    {mo:"Jul",l:"Building for Europe",spend:0},{mo:"Aug",l:"Europe self-funded",spend:1435},
+    {mo:"Sep",l:"Phoenix golf",spend:1100},{mo:"Oct",l:"Recovering",spend:0},
+    {mo:"Nov",l:"Building for Dec",spend:0},{mo:"Dec",l:"Phoenix wedding",spend:400}];
+  var cum=0,res=385;
+  q("tr-fund").innerHTML='<div class="card-title">Fund balance <span class="ct-sub">$385/mo reserve</span></div>' +
+    trips.map(function(t){
+      cum+=res; cum-=t.spend;
+      var neg=cum<0;
+      return '<div class="row"><span class="rl" style="min-width:36px;font-weight:500">'+t.mo+'</span>' +
+        '<span class="rl">'+t.l+(t.spend>0?' <span style="color:var(--red);font-size:11px">-'+fmt(t.spend)+'</span>':'')+'</span>' +
+        '<span class="ra '+(neg?"r":"g")+'">'+(neg?"-":"+")+fmt(Math.abs(cum))+'</span></div>';
     }).join("");
 
-  $("loading-points").style.display = "none";
-  $("content-points").style.display = "block";
+  q("tr-trips").innerHTML=[
+    {title:"MDW -- Shawnee National Forest",date:"Memorial Day Weekend",color:"#4a9e6e",
+     rows:[["Gas","~$60"],["Campsite x3 nights","~$75"],["Food + drinks","~$120"],["Gear gaps","~$150"]],
+     total:"~$405 cash",note:"No points play"},
+    {title:"Mukwonago, WI -- Lake house",date:"Late June, 5 days",color:"#2d7a52",
+     rows:[["House share","$900"],["Groceries + meals","~$250"],["Golf round","~$60"],["Beer + misc","~$80"]],
+     total:"~$1,290 cash",note:"No useful points play"},
+    {title:"Europe -- self-funded portion",date:"Aug 3-8, 2 people",color:"#1a2f5c",
+     rows:[["Florence to Varenna train","~$80"],["Lake Como 2 nights","~25k MR to Hilton"],
+       ["Car rental (book on CSR)","~$280"],["Ortisei 2 nights","~20k MR to Marriott"],
+       ["Dolomites + Venice + food","~$590"],["Shopping budget","~$320"]],
+     total:"~$1,435 cash + 45k MR",note:"URGENT: Book Hilton Como NOW -- August sells out."},
+    {title:"Phoenix / Pinetop Golf",date:"Sept 24 - Oct 4, 11 days",color:"#6c3483",
+     rows:[["Flights ORD-PHX (2 pax RT)","~20k AA miles"],["Lodging -- FREE","$0"],
+       ["Golf: 7 rounds","~$490"],["Gas + food + misc","~$610"]],
+     total:"~$1,100 cash + 20k AA",note:"Book both PHX trips at the same time."},
+    {title:"Phoenix Wedding",date:"Dec 3-6",color:"#922b21",
+     rows:[["Flights ORD-PHX (2 pax RT)","~20k AA miles"],["Lodging -- FREE","$0"],
+       ["Wedding gift + food","~$400"]],
+     total:"~$400 cash + 20k AA",note:""}
+  ].map(function(t){
+    return '<div style="border-left:3px solid '+t.color+';padding-left:1rem;margin-bottom:1.25rem">' +
+      '<div style="font-weight:500;font-size:14px">'+t.title+'</div>' +
+      '<div style="font-family:var(--mono);font-size:10px;color:var(--ink3);margin:2px 0 .5rem;letter-spacing:.04em">'+t.date+'</div>' +
+      t.rows.map(function(r){return '<div class="row"><span class="rl">'+r[0]+'</span><span class="ra">'+r[1]+'</span></div>';}).join("") +
+      '<div class="row" style="border-top:1px solid var(--bg3);margin-top:4px"><span class="rl" style="font-weight:500">Total</span><span class="ra">'+t.total+'</span></div>' +
+      (t.note?'<div style="font-size:11px;color:var(--ink3);margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--bg2)">'+t.note+'</div>':'')+
+      '</div>';
+  }).join("");
 }
 
 // ============================================================
-// NET WORTH
+// TRANSACTIONS (populated from Ledger once published)
 // ============================================================
-function renderNetWorth() {
-  var balances = parseBalances();
+function filterTxns() {
+  // Placeholder -- will be populated from Ledger CSV once sheet is set up
+  q("txn-count").textContent = "Connect your Ledger tab to see transactions here.";
+}
 
-  // Read from sheet with fallbacks
-  var checking_aaron = balances["checking balance (across accounts)"] || 9000;
-  var hysa = balances["hysa (marcus)"] || 20000;
-  var fil_pending = balances["fil reimbursement (0 once received)"] || 25000;
-  var k401_aaron = balances["401k -- aaron"] || balances["401k balance"] || 70000;
-  var k401_amanda = balances["401k -- amanda"] || 36000;
-  var roth = balances["roth ira"] || 12273;
-  var brokerage = balances["brokerage (fil obligation)"] || 47661;
-  var iul = balances["iul cash value"] || 50000;
-  var hsa = balances["hsa balance"] || 13482;
-  var student_loan = balances["student loan -- laurel road"] || 86567;
-  var car_loan = balances["car loan -- 4runner"] || 24412;
-
-  var totalAssets = checking_aaron + hysa + fil_pending + k401_aaron + k401_amanda + roth + brokerage + iul + hsa;
-  var totalLiabilities = student_loan + car_loan;
-  var netWorth = totalAssets - totalLiabilities;
-
-  $("nw-metrics").innerHTML = [
-    { label: "Total assets", val: fmt(totalAssets), sub: "liquid + invested", cls: "green" },
-    { label: "Total liabilities", val: fmt(totalLiabilities), sub: "student loan + car", cls: "red" },
-    { label: "Net worth", val: fmt(netWorth), sub: "excl. home ($485k)", cls: netWorth > 0 ? "green" : "red" },
-    { label: "Home equity (est.)", val: "$485,000+", sub: "gifted -- no mortgage", cls: "" }
-  ].map(function(m) {
-    return '<div class="metric"><div class="metric-label">' + m.label + '</div>' +
-           '<div class="metric-value ' + m.cls + '">' + m.val + '</div>' +
-           '<div class="metric-sub">' + m.sub + '</div></div>';
-  }).join("");
-
-  // Asset donut
-  var assetCats = ["Checking + HYSA", "FIL pending", "401k (both)", "Roth IRA", "Brokerage", "IUL", "HSA"];
-  var assetVals = [
-    checking_aaron + hysa, fil_pending,
-    k401_aaron + k401_amanda, roth, brokerage, iul, hsa
-  ];
-  var assetColors = ["#1a4731","#4a9e6e","#1a2f5c","#2980b9","#8e44ad","#d35400","#16a085"];
-
-  destroyChart("asset-donut");
-  CHARTS["asset-donut"] = new Chart($("asset-donut"), {
-    type: "doughnut",
-    data: {
-      labels: assetCats,
-      datasets: [{ data: assetVals, backgroundColor: assetColors, borderWidth: 2, borderColor: "#f8f5f0" }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: "58%",
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return " " + fmt(c.raw); } } } }
-    }
-  });
-
-  $("asset-legend").innerHTML = assetCats.map(function(c, i) {
-    return '<div class="legend-item"><div class="legend-dot" style="background:' + assetColors[i] + '"></div>' + c + ' ' + fmt(assetVals[i]) + '</div>';
-  }).join("");
-
-  // Liabilities
-  $("liabilities-rows").innerHTML =
-    '<div class="row"><span class="row-label">Student loan -- Laurel Road (4.75%)</span><span class="row-amt red">' + fmt(student_loan) + '</span></div>' +
-    '<div class="row"><span class="row-label">Car loan -- 4Runner (6.59%)</span><span class="row-amt red">' + fmt(car_loan) + '</span></div>' +
-    '<div class="row"><span class="row-label" style="font-weight:500;">Total liabilities</span><span class="row-amt red">' + fmt(totalLiabilities) + '</span></div>';
-
-  // Brokerage progress
-  var brokPct = Math.min(100, Math.round(brokerage / 485000 * 100));
-  var remaining = 485000 - brokerage;
-  var monthsLeft = Math.ceil(remaining / 2500);
-  var yrs = Math.floor(monthsLeft / 12);
-  var mos = monthsLeft % 12;
-
-  $("brokerage-progress").innerHTML =
-    '<div style="margin-top:1rem;">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:.35rem;font-size:12px;color:var(--ink3);">' +
-    '<span>FIL brokerage obligation progress</span><span style="font-family:var(--mono);">' + brokPct + '%</span></div>' +
-    '<div class="prog-track" style="max-width:100%;flex:none;"><div class="prog-fill" style="width:' + brokPct + '%;background:var(--accent2);"></div></div>' +
-    '<div style="display:flex;justify-content:space-between;margin-top:.25rem;font-size:11px;color:var(--ink3);">' +
-    '<span>' + fmt(brokerage) + ' of $485,000</span>' +
-    '<span>~' + yrs + ' yr' + (yrs !== 1 ? 's' : '') + (mos > 0 ? ' ' + mos + ' mo' : '') + ' remaining at $2,500/mo</span></div></div>';
-
-  $("loading-networth").style.display = "none";
-  $("content-networth").style.display = "block";
+function setTxnFilter(f, btn) {
+  TXN_FILTER = f;
+  document.querySelectorAll(".fbtn").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  filterTxns();
 }
 
 // ============================================================
-// NAVIGATION
+// REVIEW TAB (populated from Ledger)
 // ============================================================
-function showPage(name) {
-  document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
-  document.querySelectorAll(".nav-btn").forEach(function(b) { b.classList.remove("active"); });
-  var pg = $("page-" + name);
+function renderReviewStatic() {
+  q("review-body").innerHTML = '<div class="card" style="text-align:center;color:var(--ink3);padding:2rem">' +
+    '<div style="font-size:1.5rem;margin-bottom:.5rem">Connected to your sheet</div>' +
+    '<div style="font-size:13px">Once your Ledger tab is published and the GID is updated in this file,<br>' +
+    'flagged transactions will appear here automatically.<br><br>' +
+    'Resolve items directly in the Google Sheet Ledger tab<br>(change review_status to "resolved" or "archived")<br>' +
+    'then hit Refresh to update this view.</div></div>';
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function nav(name) {
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("active");});
+  var pg = q("page-"+name);
   if (pg) pg.classList.add("active");
-  document.querySelectorAll(".nav-btn").forEach(function(b) {
-    if (b.getAttribute("onclick") && b.getAttribute("onclick").indexOf("'" + name + "'") !== -1) {
-      b.classList.add("active");
-    }
+  document.querySelectorAll(".nb").forEach(function(b){
+    if (b.getAttribute("onclick") && b.getAttribute("onclick").indexOf("'"+name+"'")!==-1) b.classList.add("active");
   });
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
 
 // ============================================================
 // INIT
 // ============================================================
-renderTravel(); // travel is static, render immediately
+renderReviewStatic();
+renderCashFlow();
+renderTravel();
+renderPoints();
 loadAll();
 </script>
 </body>
