@@ -1543,11 +1543,77 @@ async function init() {
     });
 
     // Recalculate liquid cash KPI from live balances
+    const liquidAccts = ['Marcus HYSA Joint','Marcus Personal Amanda','Aaron Chase 6576','Aaron Chase 9057','Joint Chase 0593','Amanda Chase 3754'];
     let totalLiquid = 0;
-    bals.forEach(r => { totalLiquid += cleanAmt(r.balance); });
+    bals.forEach(r => { if(liquidAccts.includes(r.account)) totalLiquid += cleanAmt(r.balance); });
     if (totalLiquid > 0) {
       $('kpi-liquid').textContent = fmt(totalLiquid);
-      $('ptax-hysa').textContent = fmt(bals.find(r=>r.account==='Marcus HYSA Joint') ? cleanAmt(bals.find(r=>r.account==='Marcus HYSA Joint').balance) : 20512);
+      const hysa = bals.find(r=>r.account==='Marcus HYSA Joint');
+      if(hysa) $('ptax-hysa').textContent = fmt(cleanAmt(hysa.balance));
+    }
+
+    // DEBTS — read from Balances tab
+    const debtMap = {
+      'Mohela Private Loan': {balEl:'bal-mohela', dateEl:'date-mohela'},
+      'Aidvantage Federal':  {balEl:'bal-aidvantage', dateEl:'date-aidvantage'},
+      'Wells Fargo Auto':    {balEl:'bal-auto', dateEl:'date-auto'},
+      'IUL Policy Loan':     {balEl:'bal-iulloan', dateEl:null},
+    };
+    let totalDebt = 0;
+    bals.forEach(r => {
+      const m = debtMap[r.account];
+      if (!m) return;
+      const bal = cleanAmt(r.balance);
+      totalDebt += bal;
+      const el = $(m.balEl);
+      if(el) el.textContent = '–' + fmt(bal);
+      if(m.dateEl) { const de=$(m.dateEl); if(de) de.textContent = r.year_month||''; }
+    });
+    if(totalDebt > 0) {
+      $('kpi-debt').textContent = fmt(totalDebt - cleanAmt((bals.find(r=>r.account==='IUL Policy Loan')||{}).balance||0));
+      // Recalculate net worth
+      const liq = totalLiquid || 0;
+      const inv = cleanAmt(($('kpi-investments')||{}).textContent||'0');
+      const nwEl = $('kpi-networth');
+      if(nwEl && liq && totalDebt) {
+        // net worth calculated after investments load - just trigger a recalc flag
+        nwEl.dataset.debtLoaded = totalDebt;
+      }
+    }
+
+    // POINTS — read from Balances tab
+    const pointsMap = {
+      'Amex MR':       {balEl:'pts-amex', valEl:'pts-mr'},
+      'Chase UR CSR':  {balEl:'pts-csr',  valEl:null},
+      'Chase UR CSP':  {balEl:'pts-csp',  valEl:null},
+      'AA AAdvantage': {balEl:'pts-aa2',  valEl:'pts-aa'},
+    };
+    let urTotal = 0, mrTotal = 0, aaTotal = 0;
+    bals.forEach(r => {
+      const m = pointsMap[r.account];
+      if (!m) return;
+      const bal = Math.round(cleanAmt(r.balance));
+      const el = $(m.balEl);
+      if(el) el.textContent = bal.toLocaleString();
+      if(m.valEl) { const ve=$(m.valEl); if(ve) ve.textContent = bal.toLocaleString()+' pts'; }
+      if(r.account==='Amex MR') mrTotal = bal;
+      if(r.account==='Chase UR CSR'||r.account==='Chase UR CSP') urTotal += bal;
+      if(r.account==='AA AAdvantage') aaTotal = bal;
+    });
+    if(urTotal||mrTotal||aaTotal) {
+      const urEl=$('pts-ur'); if(urEl) urEl.textContent=urTotal.toLocaleString()+' pts';
+      const totalVal = Math.round((urTotal*0.015)+(mrTotal*0.018)+(aaTotal*0.020));
+      const tvEl=$('pts-total-val'); if(tvEl) tvEl.textContent='$'+totalVal.toLocaleString();
+      // Update history table first row with live data
+      const hist=$('pts-history');
+      if(hist) hist.innerHTML=`<tr>
+        <td class="primary">${new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'})}</td>
+        <td class="r amber">${mrTotal.toLocaleString()}</td>
+        <td class="r accent">${(bals.find(r=>r.account==='Chase UR CSR')?Math.round(cleanAmt(bals.find(r=>r.account==='Chase UR CSR').balance)):0).toLocaleString()}</td>
+        <td class="r accent">${(bals.find(r=>r.account==='Chase UR CSP')?Math.round(cleanAmt(bals.find(r=>r.account==='Chase UR CSP').balance)):0).toLocaleString()}</td>
+        <td class="r" style="color:var(--purple);">${aaTotal.toLocaleString()}</td>
+        <td style="color:var(--text3);">Live from sheet</td>
+      </tr>`;
     }
   }
 
